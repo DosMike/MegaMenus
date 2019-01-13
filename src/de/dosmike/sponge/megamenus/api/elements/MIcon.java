@@ -2,6 +2,9 @@ package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
@@ -9,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /** This is a raw element that has no function other than drawing an icon with text. */
-public class MIcon extends IElementImpl {
+final public class MIcon extends IElementImpl {
 
     private IIcon defaultIcon = null;
     private Text defaultName = Text.of(getClass().getSimpleName());
@@ -36,7 +39,20 @@ public class MIcon extends IElementImpl {
         return defaultLore;
     }
 
-    private MIcon() {}
+    /** set the icon for this element */
+    public void setIcon(IIcon icon) {
+        defaultIcon = icon;
+    }
+    /** set the name for this element */
+    public void setName(Text name) {
+        defaultName = name;
+    }
+    /** set the lore for this element */
+    public void setLore(List<Text> lore) {
+        defaultLore = new LinkedList<>(lore);
+    }
+
+    public MIcon() {}
 
     //Region builder
     public static class Builder {
@@ -51,6 +67,18 @@ public class MIcon extends IElementImpl {
 
         public Builder setIcon(IIcon icon) {
             element.defaultIcon = icon;
+            return this;
+        }
+        public Builder setIcon(ItemStackSnapshot icon) {
+            element.defaultIcon = IIcon.of(icon);
+            return this;
+        }
+        public Builder setIcon(ItemStack icon) {
+            element.defaultIcon = IIcon.of(icon);
+            return this;
+        }
+        public Builder setIcon(ItemType icon) {
+            element.defaultIcon = IIcon.of(icon);
             return this;
         }
         public Builder setName(Text name) {

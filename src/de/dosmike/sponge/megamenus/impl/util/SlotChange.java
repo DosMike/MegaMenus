@@ -12,7 +12,7 @@ import java.util.Optional;
 /** This class is a delta representation of a sponge slot transaction
  * since i often do not care what the original / result stack was, but what was
  * actually table/put into the slot. */
-public class SlotChange {
+final public class SlotChange {
 
     private ItemStackSnapshot take;
     private ItemStackSnapshot put;

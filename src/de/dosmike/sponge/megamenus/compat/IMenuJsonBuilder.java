@@ -139,9 +139,9 @@ public class IMenuJsonBuilder {
                         .setName(name)
                         .setLore(lore)
                         .setIcon(iiconFromJson(data.get("icon").getAsJsonArray()))
-                        .setOnClickListener((e,v)->{
+                        .setOnClickListener((e,v,l)->{
                             try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                                Sponge.getEventManager().post(new HookButtonClickEvent((MButton) e, v));
+                                Sponge.getEventManager().post(new HookButtonClickEvent((MButton) e, v, l));
                             }
                         })
                         .build();

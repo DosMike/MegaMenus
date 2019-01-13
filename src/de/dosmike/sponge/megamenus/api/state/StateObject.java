@@ -10,14 +10,24 @@ import java.util.*;
 
 /** this is a generic state that can be attached to a menu. It is meant to store smaller data.
  * Generally these states do not persis, but you can get and set them to menus at any time. */
-public class StateObject implements Serializable {
+final public class StateObject implements Serializable {
 
     private Map<String, Serializable> state = new HashMap<>();
 
+    /**
+     * Set a value to the specified key. Keys are case-insesitive.
+     * @param key the string key to save a value to
+     * @param value the value to associate with the key
+     */
     public void set(String key, Serializable value) {
         state.put(key.toLowerCase(), value);
     }
 
+    /**
+     * Retrieve a value for a key not casted to it's actual type.
+     * @param key the string key to read a value from
+     * @return the value as Serializable if present
+     */
     public Optional<Serializable> get(String key) {
         return Optional.ofNullable(state.get(key.toLowerCase()));
     }
@@ -53,10 +63,19 @@ public class StateObject implements Serializable {
         return getOfClass(key, BigDecimal.class);
     }
 
+    /**
+     * Removes all entries from the internal map
+     */
     public void clear() {
         state.clear();
     }
 
+    /**
+     * Retrieve a value for a key and try to cast if to the specified type.
+     * @param key the string key to read a value from
+     * @return the value as T
+     * @throws ClassCastException probably
+     */
     public <T> Optional<T> getOfClass(String key, Class<T> type) {
         Object o = state.get(key.toLowerCase());
         if (type.isInstance(o)) {
@@ -66,6 +85,10 @@ public class StateObject implements Serializable {
         }
     }
 
+    /**
+     * Convert this StateObject into an JsonObject
+     * @return this as Json
+     */
     public JsonElement toJson() {
         JsonObject root = new JsonObject();
 
@@ -107,6 +130,10 @@ public class StateObject implements Serializable {
         return root;
     }
 
+    /**
+     * Create a new StateObject from Json
+     * @return the restored StateObject
+     */
     public static StateObject fromJson(JsonObject object) {
         StateObject result = new StateObject();
         object.entrySet().forEach(e->{
@@ -148,6 +175,10 @@ public class StateObject implements Serializable {
         return result;
     }
 
+    /**
+     * @return a shallow copy of this StateObject.
+     * @see <a href="https://en.wikipedia.org/wiki/Object_copying#Shallow_copy">Wikipedia # Shallow copy</a>
+     */
     public StateObject copy() {
         StateObject copy = new StateObject();
         copy.state.putAll(state);

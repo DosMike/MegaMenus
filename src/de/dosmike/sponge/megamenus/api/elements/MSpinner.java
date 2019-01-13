@@ -1,6 +1,6 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
-import de.dosmike.sponge.megamenus.api.MenuRender;
+import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
@@ -8,6 +8,9 @@ import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -19,7 +22,7 @@ import java.util.List;
  * Depending on some rules this slot may ba taken by the player or something may be put
  * into this slot.<br>
  * In Book UIs this element can not be interacted with. */
-public class MSpinner extends IElementImpl implements IClickable, IValueChangeable<Integer> {
+final public class MSpinner extends IElementImpl implements IClickable, IValueChangeable<Integer> {
 
     private List<IIcon> icons = new LinkedList<>();
     private int index=0;
@@ -29,12 +32,12 @@ public class MSpinner extends IElementImpl implements IClickable, IValueChangeab
     private List<Text> defaultLore = new LinkedList<>();
 
     /** performs the internal progress fo the cyclic element and calls external listener */
-    private OnClickListener internalClickListener = (e, v) -> {
+    private OnClickListener internalClickListener = (e, v, l) -> {
         int pre = getValue();
         setValue(pre >= maxValue() ? 0 : (pre+1));
-        RenderManager.getRenderFor(v).ifPresent(MenuRender::invalidate);
+        RenderManager.getRenderFor(v).ifPresent(MenuRenderer::invalidate);
         if (clickListener!=null) {
-            clickListener.onClick(e, v);
+            clickListener.onClick(e, v, l);
         }
         if (changeListener!=null)
             changeListener.onValueChange(pre, getValue(), MSpinner.this, v);
@@ -103,12 +106,21 @@ public class MSpinner extends IElementImpl implements IClickable, IValueChangeab
         }
     }
 
+    /** set the name for this element */
+    public void setName(Text name) {
+        defaultName = name;
+    }
+    /** set the lore for this element */
+    public void setLore(List<Text> lore) {
+        defaultLore = new LinkedList<>(lore);
+    }
+
     @Override
     public void setOnChangeListener(OnChangeListener<Integer> listener) {
         changeListener = listener;
     }
 
-    private MSpinner() {}
+    public MSpinner() {}
 
     //Region builder
     public static class Builder {
@@ -123,6 +135,18 @@ public class MSpinner extends IElementImpl implements IClickable, IValueChangeab
 
         public Builder addValue(IIcon icon) {
             element.icons.add(icon);
+            return this;
+        }
+        public Builder addValue(ItemStackSnapshot icon) {
+            element.icons.add(IIcon.of(icon));
+            return this;
+        }
+        public Builder addValue(ItemStack icon) {
+            element.icons.add(IIcon.of(icon));
+            return this;
+        }
+        public Builder addValue(ItemType icon) {
+            element.icons.add(IIcon.of(icon));
             return this;
         }
         public Builder clearValues() {

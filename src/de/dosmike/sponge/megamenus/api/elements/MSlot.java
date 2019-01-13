@@ -20,20 +20,23 @@ import java.util.Optional;
  * Depending on some rules this slot may ba taken by the player or something may be put
  * into this slot.<br>
  * In Book UIs this element can not be interacted with. */
-public class MSlot extends IElementImpl implements IInventory {
+final public class MSlot extends IElementImpl implements IInventory {
 
     private ItemStack holding;
     private OnSlotChangeListener listener;
     private int slotAccess = GUI_ACCESS_PUT|GUI_ACCESS_TAKE;
 
     public MSlot(ItemStackSnapshot defaultItem) {
-        holding = defaultItem.createStack();
+        holding = defaultItem==null?ItemStack.empty():defaultItem.createStack();
     }
     public MSlot(ItemStack defaultItem) {
-        holding = defaultItem;
+        holding = defaultItem==null?ItemStack.empty():defaultItem;
     }
     public MSlot(ItemType defaultItem) {
-        holding = ItemStack.of(defaultItem);
+        holding = defaultItem==null?ItemStack.empty():ItemStack.of(defaultItem);
+    }
+    public MSlot() {
+        holding = ItemStack.empty();
     }
 
     /** returns the mutable itemstack held in this slot */
@@ -42,15 +45,15 @@ public class MSlot extends IElementImpl implements IInventory {
     }
     /** replaces the currently displayed itemstack with the provided item */
     public void setItemStack(ItemStackSnapshot snapshot) {
-        holding = snapshot.createStack();
+        holding = snapshot==null?ItemStack.empty():snapshot.createStack();
     }
     /** replaces the currently displayed itemstack with the provided item */
     public void setItemStack(ItemStack item) {
-        holding = item;
+        holding = item==null?ItemStack.empty():item;
     }
     /** replaces the currently displayed itemstack with the provided item */
     public void setItemStack(ItemType type) {
-        holding = ItemStack.of(type,1);
+        holding = type==null?ItemStack.empty():ItemStack.of(type,1);
     }
 
     @Override
@@ -92,24 +95,21 @@ public class MSlot extends IElementImpl implements IInventory {
         return holding.get(Keys.ITEM_LORE).orElseGet(LinkedList::new);
     }
 
-//    @Override
-//    public Collection<SlotPos> renderGUI(StateObject menuState, StateObject viewerState, Player viewer) {
-//        return Collections.singletonList(getPosition());
-//    }
-
     @SuppressWarnings("unchecked")
     @Override
     public MSlot copy() {
-        MSlot copy = new MSlot(holding.createSnapshot());
+        MSlot copy = new MSlot();
+        copy.setItemStack(getItemStack().orElse(ItemStack.empty()));
         copy.setPosition(getPosition());
         copy.setParent(getParent());
+        copy.slotAccess = slotAccess;
         return copy;
     }
 
     //Region builder
     public static class Builder {
         OnSlotChangeListener listener = null;
-        ItemStack initial;
+        ItemStack initial = ItemStack.empty();
         SlotPos pos = new SlotPos(0,0);
         int access = GUI_ACCESS_PUT|GUI_ACCESS_TAKE;
 

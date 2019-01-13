@@ -5,7 +5,7 @@ import de.dosmike.sponge.megamenus.api.util.Tickable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AnimationManager {
+final public class AnimationManager {
 
     private Set<Tickable> ticked = new HashSet<>();
     private long lastTick = System.currentTimeMillis();
@@ -17,13 +17,13 @@ public class AnimationManager {
     }
     public void finishTick() {
         ticked.clear();
+        lastTick = System.currentTimeMillis();
         deltaTime = null;
     }
 
-    private Integer getDeltaTime() {
+    public Integer getDeltaTime() {
         if (deltaTime == null) {
             deltaTime = (int)(System.currentTimeMillis() - lastTick);
-            lastTick = System.currentTimeMillis();
         }
         return deltaTime;
     }

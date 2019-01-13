@@ -17,7 +17,7 @@ public class HookButtonClickEvent implements Event {
     StateObject globalState;
     StateObject viewerState;
 
-    public HookButtonClickEvent(MButton element, Player viewer) {
+    public HookButtonClickEvent(MButton element, Player viewer, boolean leftButton) {
         this.element = element;
         this.viewer = viewer;
         this.menu = element.getParent();

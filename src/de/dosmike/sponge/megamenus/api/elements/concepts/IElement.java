@@ -1,30 +1,27 @@
 package de.dosmike.sponge.megamenus.api.elements.concepts;
 
-import de.dosmike.sponge.megamenus.MegaMenus;
 import de.dosmike.sponge.megamenus.api.IMenu;
-import de.dosmike.sponge.megamenus.api.MenuRender;
+import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.IIcon;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.api.util.Tickable;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
 import de.dosmike.sponge.megamenus.impl.AnimationManager;
-import de.dosmike.sponge.megamenus.impl.util.LinkedMenuProperty;
+import de.dosmike.sponge.megamenus.impl.RenderManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
-import org.spongepowered.api.item.inventory.property.AbstractInventoryProperty;
-import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Identifiable;
 
-import java.util.*;
-import java.util.stream.StreamSupport;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public interface IElement extends Identifiable {
 
@@ -34,7 +31,7 @@ public interface IElement extends Identifiable {
     <T extends IElement> T copy();
 
     /** @returns a unique id for this element within the menu.
-     * This id will be kept when copying the element to be able to keep track of it in e.g. {@link StateObject}s*/
+     * This id will be updated when copying the element */
     UUID getUniqueId();
 
     /**
@@ -95,38 +92,7 @@ public interface IElement extends Identifiable {
      * @param viewer the actual player requesting this IElement to render
      * @return all affected slots by this element
      */
-    default Collection<SlotPos> renderGUI(StateObject menuState, StateObject viewerState, Player viewer) {
-        Inventory view = viewer.getOpenInventory().get(); //when is this not present?
-        Optional<IMenu> menu = view.getInventoryProperty(LinkedMenuProperty.class).map(AbstractInventoryProperty::getValue);
-        if (!menu.isPresent() || !menu.get().equals(getParent())) {
-            MegaMenus.w("Menu was closed or changed during render");
-            return Collections.emptyList();
-        }
-        //convert position to index because slots seem to only retain index
-        int index = getPosition().getY()*9+getPosition().getX();
-
-        IIcon icon = getIcon(menuState, viewerState);
-        if (icon != null) {
-//            Inventory slot = view.query(QueryOperationTypes.INVENTORY_PROPERTY.of(getPosition())); // did not work
-//            Inventory slot = view.query(getPosition()); // did not work
-//            Inventory slot = view.query(QueryOperationTypes.INVENTORY_PROPERTY.of(new SlotIndex(getPosition().getX()+getPosition().getY()*9))); // did not work
-            //inventory API working great as always ;D
-            Inventory slot = StreamSupport.stream(view.slots().spliterator(), false).filter(s ->
-                    s.getInventoryProperty(SlotIndex.class).filter(i -> i.getValue() != null && i.getValue() == index).isPresent()
-            ).findFirst().orElse(null);
-            if (slot == null || slot.capacity() == 0) {
-                MegaMenus.w("No slot matched position %d,%d", getPosition().getX(), getPosition().getY());
-            } else {
-                slot.set(
-                        ItemStack.builder().fromSnapshot(icon.render())
-                                .add(Keys.DISPLAY_NAME, getName(menuState, viewerState))
-                                .add(Keys.ITEM_LORE, getLore(menuState, viewerState))
-                                .build()
-                );
-            }
-        }
-        return Collections.singleton(getPosition());
-    }
+    Collection<SlotPos> renderGUI(StateObject menuState, StateObject viewerState, Player viewer);
 
     /**
      * decorated a textual representation with the same Hover-Text as a inventory icon, usage is
@@ -157,7 +123,7 @@ public interface IElement extends Identifiable {
      */
     void validateGui(int pageHeight) throws ObjectBuilderException;
 
-    /** Copied from {@link MenuRender}::think<br>
+    /** Copied from {@link MenuRenderer}::think<br>
      * this method shall update all animated IElements within the menu.
      * @param animations is a tracker to prevent double frame advancement for shared anim objects
      * @return true if an animation progressed during this think tick and the menu needs to redraw.
@@ -170,4 +136,25 @@ public interface IElement extends Identifiable {
      * Should get called along with the IIcon animation updated about once a tick.
      */
     void hookThinkTick(Tickable hook);
+
+    /**
+     * Invalidates this elements Menu for all Renderer through the RenderManager.
+     * This will cause a redraw in the near future (usually next tick).
+     */
+    default void invalidate() {
+        if (getParent() != null)
+            RenderManager.getRenderFor(getParent()).forEach(MenuRenderer::invalidate);
+    }
+
+    /**
+     * Invalidates the Renderer matching this elements menu and viewed by the specified
+     * player, resulting in an inventory update for that player in the near future
+     * (usually next tick).
+     */
+    default void invalidate(Player viewer) {
+        if (getParent() != null)
+            RenderManager.getRenderFor(getParent()).stream()
+                    .filter(r->r.getMenu().equals(getParent()) && r.getViewers().contains(viewer))
+                    .findFirst().ifPresent(MenuRenderer::invalidate);
+    }
 }

@@ -2,10 +2,9 @@ package de.dosmike.sponge.megamenus.impl;
 
 import com.google.common.collect.ImmutableMap;
 import de.dosmike.sponge.megamenus.api.IMenu;
-import de.dosmike.sponge.megamenus.api.MenuRender;
+import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
-import de.dosmike.sponge.megamenus.api.listener.OnRenderStateChangeListener;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -183,24 +182,24 @@ public class BaseMenuImpl implements IMenu {
 
     //region rendering
     /**
-     * Create a new {@link GuiRender} that will handle events and inventory updates.
+     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
      * @param pageHeight is the number of rows per page in the inventory including the
      *                   pagination row.
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     @SuppressWarnings("deprecation")
     @Override
-    public MenuRender createGuiRenderer(int pageHeight) {
+    public MenuRenderer createGuiRenderer(int pageHeight) {
         if (pageHeight < 1 || pageHeight > 6)
             throw new ObjectBuilderException("A Gui Menu requires 1 to 6 rows");
 
-        return new GuiRender(this, pageHeight);
+        return new GuiRenderer(this, pageHeight);
     }
     /**
      * Creates a new {@link BoundMenuImpl} from this menu and returns a renderer for it.<br>
      * This is equal to <code>new BoundMenuImpl(this).createGuiRenderer(pageHeight)</code>
      */
-    public MenuRender createBoundGuiRenderer(int pageHeight) {
+    public MenuRenderer createBoundGuiRenderer(int pageHeight) {
         return new BoundMenuImpl(this).createGuiRenderer(pageHeight);
     }
     //endregion
@@ -213,8 +212,7 @@ public class BaseMenuImpl implements IMenu {
         copy.playerBoundStates.putAll(getPlayerStateMapCopy());
         for (int p=1;p<=pagecount;p++)
             for (IElement e : getPageElements(p))
-                copy.add(p,e);
-//        copy.uiid = uiid;
+                copy.add(p,e.copy());
         return copy;
     }
 }

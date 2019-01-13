@@ -4,6 +4,9 @@ import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
@@ -14,7 +17,7 @@ import java.util.List;
  * Depending on some rules this slot may ba taken by the player or something may be put
  * into this slot.<br>
  * In Book UIs this element can not be interacted with. */
-public class MButton extends IElementImpl implements IClickable {
+final public class MButton extends IElementImpl implements IClickable {
 
     private IIcon defaultIcon = null;
     private OnClickListener clickListener = null;
@@ -55,7 +58,20 @@ public class MButton extends IElementImpl implements IClickable {
         return defaultLore;
     }
 
-    private MButton() {}
+    /** set the icon for this element */
+    public void setIcon(IIcon icon) {
+        defaultIcon = icon;
+    }
+    /** set the name for this element */
+    public void setName(Text name) {
+        defaultName = name;
+    }
+    /** set the lore for this element */
+    public void setLore(List<Text> lore) {
+        defaultLore = new LinkedList<>(lore);
+    }
+
+    public MButton() {}
 
     //Region builder
     public static class Builder {
@@ -70,6 +86,18 @@ public class MButton extends IElementImpl implements IClickable {
 
         public Builder setIcon(IIcon icon) {
             element.defaultIcon = icon;
+            return this;
+        }
+        public Builder setIcon(ItemStackSnapshot icon) {
+            element.defaultIcon = IIcon.of(icon);
+            return this;
+        }
+        public Builder setIcon(ItemStack icon) {
+            element.defaultIcon = IIcon.of(icon);
+            return this;
+        }
+        public Builder setIcon(ItemType icon) {
+            element.defaultIcon = IIcon.of(icon);
             return this;
         }
         public Builder setName(Text name) {

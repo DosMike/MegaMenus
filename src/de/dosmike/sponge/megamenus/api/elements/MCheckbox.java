@@ -1,6 +1,6 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
-import de.dosmike.sponge.megamenus.api.MenuRender;
+import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
@@ -24,7 +24,7 @@ import java.util.List;
  * Depending on some rules this slot may ba taken by the player or something may be put
  * into this slot.<br>
  * In Book UIs this element can not be interacted with. */
-public class MCheckbox extends IElementImpl implements IClickable, IValueChangeable<Integer> {
+final public class MCheckbox extends IElementImpl implements IClickable, IValueChangeable<Integer> {
 
     private List<IIcon> icons = Arrays.asList(
             IIcon.of(ItemStack.builder().itemType(ItemTypes.DYE).add(Keys.DYE_COLOR, DyeColors.GRAY).build()),
@@ -38,12 +38,12 @@ public class MCheckbox extends IElementImpl implements IClickable, IValueChangea
     private List<Text> defaultLore = new LinkedList<>();
 
     /** performs the internal progress fo the cyclic element and calls external listener */
-    private OnClickListener internalClickListener = (e, v) -> {
+    private OnClickListener internalClickListener = (e, v, l) -> {
         int pre = getValue();
         setValue(pre == 1 ? 0 : 1);
-        RenderManager.getRenderFor(v).ifPresent(MenuRender::invalidate);
+        RenderManager.getRenderFor(v).ifPresent(MenuRenderer::invalidate);
         if (clickListener!=null) {
-            clickListener.onClick(e, v);
+            clickListener.onClick(e, v, l);
         }
         if (changeListener!=null)
             changeListener.onValueChange(pre, getValue(), MCheckbox.this, v);
@@ -114,12 +114,21 @@ public class MCheckbox extends IElementImpl implements IClickable, IValueChangea
         return lore;
     }
 
+    /** set the name for this element */
+    public void setName(Text name) {
+        defaultName = name;
+    }
+    /** set the lore for this element */
+    public void setLore(List<Text> lore) {
+        defaultLore = new LinkedList<>(lore);
+    }
+
     @Override
     public void setOnChangeListener(OnChangeListener<Integer> listener) {
         changeListener = listener;
     }
 
-    private MCheckbox() {}
+    public MCheckbox() {}
 
     //Region builder
     public static class Builder {
@@ -172,6 +181,7 @@ public class MCheckbox extends IElementImpl implements IClickable, IValueChangea
         MCheckbox copy = new MCheckbox();
         copy.setPosition(getPosition());
         copy.setParent(getParent());
+        copy.value = value;
         copy.defaultName = defaultName;
         copy.defaultLore = new LinkedList<>(defaultLore);
         copy.clickListener = clickListener;

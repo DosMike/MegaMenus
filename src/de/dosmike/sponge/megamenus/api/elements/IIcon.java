@@ -91,9 +91,10 @@ public interface IIcon extends Tickable {
             return new IIcon() {
                 ItemStackSnapshot[] icons = items.toArray(new ItemStackSnapshot[0]);
                 int frame = 0;
-                int frameTime = Math.max(Builder.this.frameTime, 0);
+                int frameTime = Math.max(Builder.this.frameTime, 1);
                 @Override
                 public ItemStackSnapshot render() {
+                    if (icons.length==0) return ItemStackSnapshot.NONE;
                     return icons[frame];
                 }
                 int passedTime = 0;
@@ -102,9 +103,13 @@ public interface IIcon extends Tickable {
                     boolean change = false;
                     passedTime += ms;
                     while (passedTime > frameTime) {
-                        change = true;
-                        if (++frame > icons.length)
-                            frame = 0;
+                        passedTime-=frameTime;
+                        if (icons.length > 1) {
+                            change = true;
+                            if (++frame >= icons.length) {
+                                frame = 0;
+                            }
+                        }
                     }
                     return change;
                 }
@@ -121,6 +126,7 @@ public interface IIcon extends Tickable {
      * convenience function for retrieving a static IIcon from a ItemStackSnapshot
      */
     static IIcon of(ItemStackSnapshot snapshot) {
+        if (snapshot==null) return null;
         return new IIcon() {
             ItemStackSnapshot display = snapshot.copy();
             @Override
@@ -133,6 +139,7 @@ public interface IIcon extends Tickable {
      * convenience function for retrieving a static IIcon from a ItemStack
      */
     static IIcon of(ItemStack stack) {
+        if (stack==null) return null;
         return new IIcon() {
             ItemStackSnapshot display = stack.createSnapshot();
             @Override
@@ -145,6 +152,7 @@ public interface IIcon extends Tickable {
      * convenience function for retrieving a static IIcon from a ItemType
      */
     static IIcon of(ItemType type) {
+        if (type==null) return null;
         return new IIcon() {
             ItemStackSnapshot display = type.getTemplate();
             @Override

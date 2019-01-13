@@ -2,7 +2,7 @@ package de.dosmike.sponge.megamenus.impl;
 
 import com.google.common.collect.ImmutableMap;
 import de.dosmike.sponge.megamenus.api.IMenu;
-import de.dosmike.sponge.megamenus.api.MenuRender;
+import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
@@ -26,8 +26,17 @@ public class BoundMenuImpl implements IMenu {
         this.menu = baseMenu;
         pagecount = menu.pagecount;
         menu.pageelements.forEach((key, value) ->
-                pageelements.put(key, value.stream().map(o ->
-                        (IElement) o.copy()).collect(Collectors.toCollection(LinkedList::new))
+                pageelements.put(key, value.stream()
+                        .map(o -> {
+                            IElement copy = o.copy();
+                            // re-bind the copied element to this menu
+                            if (copy instanceof IElementImpl) {
+                                ((IElementImpl) copy).setParent(null);
+                                ((IElementImpl) copy).setParent(this);
+                            }
+                            return copy;
+                        })
+                        .collect(Collectors.toCollection(LinkedList::new))
                 )
         );
     }
@@ -186,18 +195,18 @@ public class BoundMenuImpl implements IMenu {
 
     //region rendering
     /**
-     * Create a new {@link GuiRender} that will handle events and inventory updates.
+     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
      * @param pageheight is the number of rows per page in the inventory including the
      *                   pagination row.
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     @SuppressWarnings("deprecation")
     @Override
-    public MenuRender createGuiRenderer(int pageheight) {
+    public MenuRenderer createGuiRenderer(int pageheight) {
         if (pageheight < 1 || pageheight > 6)
             throw new ObjectBuilderException("A Gui Menu requires 1 to 6 rows");
 
-        return new GuiRender(this, pageheight);
+        return new GuiRenderer(this, pageheight);
     }
     //endregion
 
