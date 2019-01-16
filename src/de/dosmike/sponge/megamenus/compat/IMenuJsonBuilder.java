@@ -23,6 +23,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -120,11 +121,10 @@ public class IMenuJsonBuilder {
             }
             case "spinner": {
                 MSpinner.Builder builder = MSpinner.builder()
-                        .setName(name)
-                        .setLore(lore);
-                StreamSupport.stream(data.get("values").getAsJsonArray().spliterator(), false)
-                        .map(IMenuJsonBuilder::iiconFromJson)
-                        .forEach(builder::addValue);
+                        .setName(name);
+                for (Map.Entry<String, JsonElement> entry : data.get("values").getAsJsonObject().entrySet()) {
+                    builder.addValue(iiconFromJson(entry.getValue()), TextSerializers.FORMATTING_CODE.deserialize(entry.getKey()) );
+                }
                 builder.setOnChangeListener((o,n,e,v)->{
                     try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                         Sponge.getEventManager().post(new HookValueChangeEvent<>(o, n, (MSpinner) e, v));
@@ -139,9 +139,9 @@ public class IMenuJsonBuilder {
                         .setName(name)
                         .setLore(lore)
                         .setIcon(iiconFromJson(data.get("icon").getAsJsonArray()))
-                        .setOnClickListener((e,v,l)->{
+                        .setOnClickListener((e,v,b,s)->{
                             try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                                Sponge.getEventManager().post(new HookButtonClickEvent((MButton) e, v, l));
+                                Sponge.getEventManager().post(new HookButtonClickEvent((MButton) e, v, b, s));
                             }
                         })
                         .build();
@@ -153,7 +153,7 @@ public class IMenuJsonBuilder {
                         .build();
                 ((MSlot) element).setSlotChangeListener((c,e,v)->{
                     try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                        Sponge.getEventManager().post(new HookSlotChangeEvent(c, (MSlot) e, v));
+                        Sponge.getEventManager().post(new HookSlotChangeEvent((MSlot) e, c, v));
                     }
                 });
                 break;

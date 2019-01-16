@@ -17,12 +17,17 @@ public class HookButtonClickEvent implements Event {
     StateObject globalState;
     StateObject viewerState;
 
-    public HookButtonClickEvent(MButton element, Player viewer, boolean leftButton) {
+    int button;
+    boolean shift;
+
+    public HookButtonClickEvent(MButton element, Player viewer, int button, boolean shift) {
         this.element = element;
         this.viewer = viewer;
         this.menu = element.getParent();
         globalState = this.menu.getState();
         viewerState = this.menu.getPlayerState(viewer.getUniqueId());
+        this.button = button;
+        this.shift = shift;
     }
 
     @Override

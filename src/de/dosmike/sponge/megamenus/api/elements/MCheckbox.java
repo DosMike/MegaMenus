@@ -7,23 +7,26 @@ import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
+import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** This is a menu element that behaves like a regular inventory slot.
- * Depending on some rules this slot may ba taken by the player or something may be put
- * into this slot.<br>
- * In Book UIs this element can not be interacted with. */
+/** This element displays a tri-state that toggles when clicking on it.
+ * A Player can only toggle between true and false. */
 final public class MCheckbox extends IElementImpl implements IClickable, IValueChangeable<Integer> {
 
     private List<IIcon> icons = Arrays.asList(
@@ -38,16 +41,21 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
     private List<Text> defaultLore = new LinkedList<>();
 
     /** performs the internal progress fo the cyclic element and calls external listener */
-    private OnClickListener internalClickListener = (e, v, l) -> {
+    @Override
+    public void fireClickEvent(Player viewer, int button, boolean shift) {
         int pre = getValue();
         setValue(pre == 1 ? 0 : 1);
-        RenderManager.getRenderFor(v).ifPresent(MenuRenderer::invalidate);
+        invalidate(viewer);
         if (clickListener!=null) {
-            clickListener.onClick(e, v, l);
+            clickListener.onClick(this, viewer, button, shift);
         }
+        fireChangeListener(viewer, pre, getValue());
+    }
+    @Override
+    public void fireChangeListener(Player viewer, Integer oldValue, Integer newValue) {
         if (changeListener!=null)
-            changeListener.onValueChange(pre, getValue(), MCheckbox.this, v);
-    };
+            changeListener.onValueChange(oldValue, newValue, this, viewer);
+    }
 
     /**
      * Values: 1 selected, 0 not selected, -1 tri-state
@@ -70,7 +78,7 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
      */
     @Override
     public OnClickListener getOnClickListerner() {
-        return internalClickListener;
+        return clickListener;
     }
 
     @Override
@@ -174,6 +182,37 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
     }
     //endregion
 
+    @Override
+    public Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
+        IIcon icon = getIcon(menuState, viewerState);
+        List<Text> lore = getLore(menuState, viewerState);
+        Text display = getName(menuState, viewerState);
+        int val = getValue();
+        display = Text.builder()
+                .append(Text.of("["+(val==1?"\u2611":(val==0?"\u2612":"\u2610"))+"] ",display))
+                .style(TextStyles.of(TextStyles.ITALIC))
+                .build();
+        if (lore.isEmpty()) {
+            return display;
+        } else {
+            List<Text> sublore = lore.size()>1 ? lore.subList(1,lore.size()) : Collections.EMPTY_LIST;
+            return Text.builder().append(display).onHover(
+                    icon != null
+                            ? TextActions.showItem(ItemStack.builder().fromSnapshot(icon.render())
+                            .add(Keys.DISPLAY_NAME, lore.get(0))
+                            .add(Keys.ITEM_LORE, sublore)
+                            .build().createSnapshot())
+                            : TextActions.showText(Text.of(
+                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(menuState, viewerState))
+                    ))
+            ).onClick(TextActions.executeCallback((src)->{
+                RenderManager.getRenderFor((Player)src)
+                        .filter(r->(r instanceof TextMenuRenderer))
+                        .ifPresent(r->((TextMenuRenderer)r).delegateClickEvent(MCheckbox.this, (Player)src));
+            }))
+                    .build();
+        }
+    }
 
     @SuppressWarnings("unchecked")
     @Override

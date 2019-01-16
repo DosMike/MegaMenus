@@ -8,6 +8,7 @@ import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.intellij.lang.annotations.MagicConstant;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
@@ -198,15 +199,52 @@ public class BoundMenuImpl implements IMenu {
      * Create a new {@link GuiRenderer} that will handle events and inventory updates.
      * @param pageheight is the number of rows per page in the inventory including the
      *                   pagination row.
+     * @param bound not applicable, has to be false
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     @SuppressWarnings("deprecation")
     @Override
-    public MenuRenderer createGuiRenderer(int pageheight) {
+    public MenuRenderer createGuiRenderer(int pageheight, boolean bound) {
+        if (bound)
+            throw new IllegalArgumentException("Can't create a bound menu instance from a bound menu");
         if (pageheight < 1 || pageheight > 6)
             throw new ObjectBuilderException("A Gui Menu requires 1 to 6 rows");
 
         return new GuiRenderer(this, pageheight);
+    }
+    /**
+     * Create a new {@link BookRenderer} that will handle events and view updates.<br>
+     * A book has a fixed page height of 15 lines!
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu
+     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public MenuRenderer createBookRenderer(boolean bound) {
+        if (bound)
+            throw new IllegalArgumentException("Can't create a bound menu instance from a bound menu");
+
+        return new BookRenderer(this);
+    }
+    /**
+     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
+     * @param pageHeight is the number of rows per page in the inventory including the
+     *                   pagination row.
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu
+     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public MenuRenderer createChatRenderer(int pageHeight, boolean bound) {
+        if (bound)
+            throw new IllegalArgumentException("Can't create a bound menu instance from a bound menu");
+
+        if (pageHeight < 1)
+            throw new ObjectBuilderException("A Chat pagination can't have less than 1 height");
+
+        return new ChatRenderer(this, pageHeight);
     }
     //endregion
 

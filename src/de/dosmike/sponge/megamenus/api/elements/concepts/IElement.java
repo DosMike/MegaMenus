@@ -19,9 +19,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Identifiable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public interface IElement extends Identifiable {
 
@@ -102,19 +100,25 @@ public interface IElement extends Identifiable {
      * @param viewerState the viewer bound {@link StateObject} for this menu
      * @param viewer the actual player requesting this IElement to render
      */
-    default Text renderTUI(@NotNull Text visual, StateObject menuState, StateObject viewerState, Player viewer) {
+    default Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
         IIcon icon = getIcon(menuState, viewerState);
-        return Text.builder().append(visual).onHover(
-                icon != null
-                ? TextActions.showItem(ItemStack.builder().fromSnapshot(icon.render())
-                        .add(Keys.DISPLAY_NAME, getName(menuState, viewerState))
-                        .add(Keys.ITEM_LORE, getLore(menuState, viewerState))
-                        .build().createSnapshot())
-                : TextActions.showText(Text.of(
-                        getName(menuState, viewerState), Text.NEW_LINE, TextColors.GRAY,
-                        Text.joinWith(Text.of(Text.NEW_LINE, TextColors.GRAY), getLore(menuState, viewerState))
-                        ))
-        ).build();
+        List<Text> lore = getLore(menuState, viewerState);
+        Text display = getName(menuState, viewerState);
+        if (lore.isEmpty()) {
+            return display;
+        } else {
+            List<Text> sublore = lore.size()>1 ? lore.subList(1,lore.size()) : Collections.EMPTY_LIST;
+            return Text.builder().append(display).onHover(
+                    icon != null
+                    ? TextActions.showItem(ItemStack.builder().fromSnapshot(icon.render())
+                            .add(Keys.DISPLAY_NAME, lore.get(0))
+                            .add(Keys.ITEM_LORE, sublore)
+                            .build().createSnapshot())
+                    : TextActions.showText(Text.of(
+                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(menuState, viewerState))
+                    ))
+            ).build();
+        }
     }
 
     /**

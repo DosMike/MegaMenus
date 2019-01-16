@@ -1,51 +1,30 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
-import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
-import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
-import de.dosmike.sponge.megamenus.impl.RenderManager;
-import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
-import org.spongepowered.api.data.key.Keys;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextStyles;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** This element acts like a button, it can be clicked at and performs an action. */
-final public class MButton extends IElementImpl implements IClickable {
+/**
+ * This is a raw element that has no function other than drawing an icon with text.<br>
+ * This is a special element for Text UIs that won't render as {@link ItemStack} on hover.<br>
+ * For GUI renders it behaves exactly like an {@link MIcon}
+ */
+final public class MLabel extends IElementImpl {
 
     private IIcon defaultIcon = null;
-    private OnClickListener clickListener = null;
     private Text defaultName = Text.of(getClass().getSimpleName());
     private List<Text> defaultLore = new LinkedList<>();
-
-    /**
-     * Invoking this manually will cause the cyclic element to progress and call the change listener as well
-     */
-    @Override
-    public OnClickListener getOnClickListerner() {
-        return clickListener;
-    }
-
-    @Override
-    public void fireClickEvent(Player viewer, int button, boolean shift) {
-        if (clickListener != null)
-            clickListener.onClick(this, viewer, button, shift);
-    }
-
-    @Override
-    public void setOnClickListener(OnClickListener listener) {
-        clickListener = listener;
-    }
 
     @Override
     public IIcon getIcon(StateObject menuState, StateObject viewerState) {
@@ -81,11 +60,11 @@ final public class MButton extends IElementImpl implements IClickable {
         defaultLore = new LinkedList<>(lore);
     }
 
-    public MButton() {}
+    public MLabel() {}
 
     //Region builder
     public static class Builder {
-        MButton element = new MButton();
+        MLabel element = new MLabel();
         private Builder() {
         }
 
@@ -120,13 +99,8 @@ final public class MButton extends IElementImpl implements IClickable {
             return this;
         }
 
-        public Builder setOnClickListener(OnClickListener listener) {
-            element.clickListener = listener;
-            return this;
-        }
-
-        public MButton build() {
-            MButton copy = element.copy();
+        public MLabel build() {
+            MLabel copy = element.copy();
             return copy;
         }
     }
@@ -136,53 +110,27 @@ final public class MButton extends IElementImpl implements IClickable {
     }
     //endregion
 
+
     @Override
     public Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
-        IIcon icon = getIcon(menuState, viewerState);
-        List<Text> lore = getLore(menuState, viewerState);
-        Text display = getName(menuState, viewerState);
-        display = Text.builder()
-                .append(display)
-                .style(TextStyles.of(TextStyles.ITALIC, TextStyles.UNDERLINE))
-                .build();
-        if (lore.isEmpty()) {
-            return Text.builder().append(display)
-            .onClick(TextActions.executeCallback((src)->{
-                RenderManager.getRenderFor((Player)src)
-                        .filter(r->(r instanceof TextMenuRenderer))
-                        .ifPresent(r->((TextMenuRenderer)r).delegateClickEvent(MButton.this, (Player)src));
-            }))
-            .build();
-        } else {
-            List<Text> sublore = lore.size()>1 ? lore.subList(1,lore.size()) : Collections.EMPTY_LIST;
-            return Text.builder().append(display).onHover(
-                    icon != null
-                    ? TextActions.showItem(ItemStack.builder().fromSnapshot(icon.render())
-                            .add(Keys.DISPLAY_NAME, lore.get(0))
-                            .add(Keys.ITEM_LORE, sublore)
-                            .build().createSnapshot())
-                    : TextActions.showText(Text.of(
-                            Text.joinWith(Text.of(Text.NEW_LINE), lore)
-                    ))
-            ).onClick(TextActions.executeCallback((src)->{
-                RenderManager.getRenderFor((Player)src)
-                        .filter(r->(r instanceof TextMenuRenderer))
-                        .ifPresent(r->((TextMenuRenderer)r).delegateClickEvent(MButton.this, (Player)src));
-            }))
-            .build();
-        }
+        if (defaultLore.isEmpty())
+            return defaultName;
+        else
+            return Text.builder()
+                    .append(defaultName)
+                    .onHover(TextActions.showText(Text.joinWith(Text.NEW_LINE, defaultLore)))
+                    .build();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public MButton copy() {
-        MButton copy = new MButton();
+    public MLabel copy() {
+        MLabel copy = new MLabel();
         copy.setPosition(getPosition());
         copy.setParent(getParent());
         copy.defaultName = defaultName;
         copy.defaultIcon = defaultIcon;
         copy.defaultLore = new LinkedList<>(defaultLore);
-        copy.clickListener = clickListener;
         return copy;
     }
 }

@@ -96,7 +96,7 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
     @Override
     public synchronized void close(Player viewer) {
         //notify listeners
-        if (renderListener != null)
+        if (renderListener != null && viewers.contains(viewer))
             if (renderListener.closed(this, menu, viewer))
                 return; //custom parent redirect
         //close/delegate inventory
@@ -112,7 +112,7 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
     /** to be called from inventory events - won't close the actual inventory, but will untrack this player*/
     public synchronized void closeSilent(Player viewer) {
         viewers.remove(viewer);
-        if (renderListener != null) {
+        if (renderListener != null && viewers.contains(viewer)) {
             renderListener.closed(this, menu, viewer);
         }
     }

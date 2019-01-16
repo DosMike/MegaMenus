@@ -4,8 +4,10 @@ import de.dosmike.sponge.megamenus.api.elements.concepts.IInventory;
 import de.dosmike.sponge.megamenus.api.listener.OnSlotChangeListener;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import de.dosmike.sponge.megamenus.impl.util.SlotChange;
 import org.intellij.lang.annotations.MagicConstant;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -54,6 +56,12 @@ final public class MSlot extends IElementImpl implements IInventory {
     /** replaces the currently displayed itemstack with the provided item */
     public void setItemStack(ItemType type) {
         holding = type==null?ItemStack.empty():ItemStack.of(type,1);
+    }
+
+    @Override
+    public void fireSlotChangeEvent(Player viewer, SlotChange change) {
+        if (listener != null)
+            listener.onSlotChange(change, this, viewer);
     }
 
     @Override

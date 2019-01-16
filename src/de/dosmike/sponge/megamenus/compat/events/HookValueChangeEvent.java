@@ -21,12 +21,12 @@ public class HookValueChangeEvent<V, T extends IValueChangeable<V> & IElement>  
     V oldValue, newValue;
 
     public HookValueChangeEvent(V oldValue, V newValue, T element, Player viewer) {
-        this.oldValue = oldValue;
-        this.newValue = newValue;
         this.viewer = viewer;
         this.menu = element.getParent();
         globalState = this.menu.getState();
         viewerState = this.menu.getPlayerState(viewer.getUniqueId());
+        this.oldValue = oldValue;
+        this.newValue = newValue;
     }
 
     @Override

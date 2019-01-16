@@ -6,6 +6,8 @@ import de.dosmike.sponge.megamenus.api.elements.IIcon;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
+import de.dosmike.sponge.megamenus.impl.BookRenderer;
+import de.dosmike.sponge.megamenus.impl.ChatRenderer;
 import de.dosmike.sponge.megamenus.impl.GuiRenderer;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import org.spongepowered.api.entity.living.player.Player;
@@ -119,11 +121,31 @@ public interface IMenu extends Identifiable {
     //region rendering
     /**
      * Create a new {@link GuiRenderer} that will handle events and inventory updates.
-     * @param pageheight is the number of rows per page in the inventory including the
+     * @param pageHeight is the number of rows per page in the inventory including the
      *                   pagination row.
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
-    MenuRenderer createGuiRenderer(int pageheight);
+    MenuRenderer createGuiRenderer(int pageHeight, boolean bound);
+
+    /**
+     * Create a new {@link BookRenderer} that will handle events and book view updates.<br>
+     * A book has a limited line-count of 15!
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu
+     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     */
+    MenuRenderer createBookRenderer(boolean bound);
+
+    /**
+     * Create a new {@link ChatRenderer} that will handle events and book view updates.<br>
+     * @param pageHeight is the number of lines per page in the chat pagination including.
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu
+     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     */
+    MenuRenderer createChatRenderer(int pageHeight, boolean bound);
 
     /**
      * Fetches all renderer for this menu from RenderManager and invalidates them.

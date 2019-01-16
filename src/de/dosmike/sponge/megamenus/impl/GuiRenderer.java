@@ -31,6 +31,7 @@ import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -155,17 +156,17 @@ public class GuiRenderer extends AbstractMenuRenderer {
             }
 
             if (e instanceof IClickable) {
-                OnClickListener listener = ((IClickable)e).getOnClickListerner();
-                if (listener != null)
-                    soon(()->listener.onClick((IClickable)e, viewer, (event instanceof ClickInventoryEvent.Primary)));
+                int button = MouseEvent.NOBUTTON;
+                if (event instanceof ClickInventoryEvent.Primary) button = MouseEvent.BUTTON1;
+                else if (event instanceof ClickInventoryEvent.Secondary) button = MouseEvent.BUTTON2;
+                else if (event instanceof ClickInventoryEvent.Middle) button = MouseEvent.BUTTON3;
+                ((IClickable)e).fireClickEvent(viewer, button, (event instanceof ClickInventoryEvent.Shift));
             }
             if (!cancelInventory && e instanceof IInventory) {
                 if (e instanceof MSlot) {
                     ((MSlot)e).setItemStack(slot.getTransaction().getFinal());
                 }
-                OnSlotChangeListener listener = ((IInventory)e).getSlotChangeListener();
-                if (listener != null)
-                    soon(()->listener.onSlotChange(slot, e, viewer));
+                ((IInventory)e).fireSlotChangeEvent(viewer, slot);
             }
         }
     }

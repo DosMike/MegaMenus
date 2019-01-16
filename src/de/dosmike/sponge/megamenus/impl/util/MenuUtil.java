@@ -28,7 +28,11 @@ final public class MenuUtil {
 
     public static void closeInventory(Player player) {
         Task.builder().delayTicks(1)
-                .execute(player::closeInventory)
+                .execute(()->{
+                    //open inventory to close book renderers
+                    player.openInventory(player.getInventory());
+                    player.closeInventory();
+                })
                 .submit(MegaMenus.getInstance());
     }
     public static void openInventory(Player player, Inventory inventory) {

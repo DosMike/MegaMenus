@@ -185,22 +185,58 @@ public class BaseMenuImpl implements IMenu {
      * Create a new {@link GuiRenderer} that will handle events and inventory updates.
      * @param pageHeight is the number of rows per page in the inventory including the
      *                   pagination row.
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu. If you create a menu dynamically for
+     *              a player it's better to not create a bound renderer.
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     @SuppressWarnings("deprecation")
     @Override
-    public MenuRenderer createGuiRenderer(int pageHeight) {
+    public MenuRenderer createGuiRenderer(int pageHeight, boolean bound) {
+        if (bound) {
+            return new BoundMenuImpl(this).createGuiRenderer(pageHeight, false);
+        }
         if (pageHeight < 1 || pageHeight > 6)
             throw new ObjectBuilderException("A Gui Menu requires 1 to 6 rows");
 
         return new GuiRenderer(this, pageHeight);
     }
     /**
-     * Creates a new {@link BoundMenuImpl} from this menu and returns a renderer for it.<br>
-     * This is equal to <code>new BoundMenuImpl(this).createGuiRenderer(pageHeight)</code>
+     * Create a new {@link BookRenderer} that will handle events and view updates.<br>
+     * A book has a fixed page height of 15 lines!
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu. If you create a menu dynamically for
+     *              a player it's better to not create a bound renderer.
+     * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
-    public MenuRenderer createBoundGuiRenderer(int pageHeight) {
-        return new BoundMenuImpl(this).createGuiRenderer(pageHeight);
+    @SuppressWarnings("deprecation")
+    @Override
+    public MenuRenderer createBookRenderer(boolean bound) {
+        if (bound) {
+            return new BoundMenuImpl(this).createBookRenderer(false);
+        }
+
+        return new BookRenderer(this);
+    }
+    /**
+     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
+     * @param pageHeight is the number of rows per page in the inventory including the
+     *                   pagination row.
+     * @param bound if true this will create a copy of all elements to draw a non-shared,
+     *              player-bound instance of this menu. If you create a menu dynamically for
+     *              a player it's better to not create a bound renderer.
+     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public MenuRenderer createChatRenderer(int pageHeight, boolean bound) {
+        if (bound) {
+            return new BoundMenuImpl(this).createChatRenderer(pageHeight, false);
+        }
+        if (pageHeight < 1)
+            throw new ObjectBuilderException("A Chat pagination can't have less than 1 height");
+
+        return new ChatRenderer(this, pageHeight);
     }
     //endregion
 

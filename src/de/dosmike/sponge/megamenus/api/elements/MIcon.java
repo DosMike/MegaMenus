@@ -11,7 +11,11 @@ import org.spongepowered.api.text.Text;
 import java.util.LinkedList;
 import java.util.List;
 
-/** This is a raw element that has no function other than drawing an icon with text. */
+/**
+ * This is a raw element that has no function other than drawing an icon with text.<br>
+ * Other than MLabel this will render as {@link ItemStack} on hover in a Text UI.<br>
+ * For GUI renders it behaves exactly like an {@link MLabel}
+ */
 final public class MIcon extends IElementImpl {
 
     private IIcon defaultIcon = null;
