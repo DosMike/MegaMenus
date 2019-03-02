@@ -39,7 +39,7 @@ public class ChatRenderer extends TextMenuRenderer {
             });
             for(IElement e : elements) {
                 if (elementsInPage++ >= pageHeight) break;
-                contents.add(e.renderTUI(getMenu().getState(), getMenu().getPlayerState(viewer.getUniqueId()), viewer));
+                contents.add(e.renderTUI(viewer));
             }
             while (elementsInPage++ < pageHeight)
                 contents.add(Text.EMPTY);

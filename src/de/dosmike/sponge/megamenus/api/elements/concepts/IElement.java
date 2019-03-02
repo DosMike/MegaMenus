@@ -40,19 +40,21 @@ public interface IElement extends Identifiable {
      * or the players state.
      * The default implementations usually ignore states, but you're free to override.
      * */
-    IIcon getIcon(StateObject global, StateObject viewer);
+    IIcon getIcon(Player viewer);
     /**
      * The state parameters are presented to allow dynamic rendering depending on the global menu state
      * or the players state.
      * The default implementations usually ignore states, but you're free to override.
+     * @return the Text to display instead of the Item name, or null, if the icon shall specify
      */
-    Text getName(StateObject global, StateObject viewer);
+    Text getName(Player viewer);
     /**
      * The state parameters are presented to allow dynamic rendering depending on the global menu state
      * or the players state.
      * The default implementations usually ignore states, but you're free to override.
+     * @return the Lore to display instead if the items one, or null, if the icon shall specify
      */
-    List<Text> getLore(StateObject global, StateObject viewer);
+    List<Text> getLore(Player viewer);
     /**
      * This value is only relevant for GUIs. It returns where the element is positioned within
      * the inventory space.
@@ -85,25 +87,21 @@ public interface IElement extends Identifiable {
     /**
      * takes the IICon, adds element specific data and returns it to be rendered in a
      * inventory menu.
-     * @param menuState the global {@link StateObject} for this menu
-     * @param viewerState the viewer bound {@link StateObject} for this menu
      * @param viewer the actual player requesting this IElement to render
      * @return all affected slots by this element
      */
-    Collection<SlotPos> renderGUI(StateObject menuState, StateObject viewerState, Player viewer);
+    Collection<SlotPos> renderGUI(Player viewer);
 
     /**
      * decorated a textual representation with the same Hover-Text as a inventory icon, usage is
      * to call super(Text.of("Implementation Specific Representation")); The default implementation
      * will just pass in the Elements ClassName as Text
-     * @param menuState the global {@link StateObject} for this menu
-     * @param viewerState the viewer bound {@link StateObject} for this menu
      * @param viewer the actual player requesting this IElement to render
      */
-    default Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
-        IIcon icon = getIcon(menuState, viewerState);
-        List<Text> lore = getLore(menuState, viewerState);
-        Text display = getName(menuState, viewerState);
+    default Text renderTUI(Player viewer) {
+        IIcon icon = getIcon(viewer);
+        List<Text> lore = getLore(viewer);
+        Text display = getName(viewer);
         if (lore.isEmpty()) {
             return display;
         } else {
@@ -115,7 +113,7 @@ public interface IElement extends Identifiable {
                             .add(Keys.ITEM_LORE, sublore)
                             .build().createSnapshot())
                     : TextActions.showText(Text.of(
-                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(menuState, viewerState))
+                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(viewer))
                     ))
             ).build();
         }
@@ -132,7 +130,7 @@ public interface IElement extends Identifiable {
      * @param animations is a tracker to prevent double frame advancement for shared anim objects
      * @return true if an animation progressed during this think tick and the menu needs to redraw.
      */
-    boolean think(AnimationManager animations, StateObject menuState, StateObject viewerState);
+    boolean think(AnimationManager animations, Player viewer);
 
 
     /**

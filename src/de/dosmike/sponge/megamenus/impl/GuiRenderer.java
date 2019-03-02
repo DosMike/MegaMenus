@@ -227,11 +227,7 @@ public class GuiRenderer extends AbstractMenuRenderer {
                 try {
                     element.validateGui(pageHeight);
                     paintTracker.removeAll(
-                            element.renderGUI(
-                                    menu.getState(),
-                                    menu.getPlayerState(viewer.getUniqueId()),
-                                    viewer
-                            )
+                            element.renderGUI(viewer)
                     );
                 } catch (Exception e) {
                     rendering.set(false);
@@ -244,6 +240,7 @@ public class GuiRenderer extends AbstractMenuRenderer {
             return;
         }
 
+        //pagination
         Inventory view = viewer.getOpenInventory().get().first(); //when is this not present?
         if (menu.pages()>1) {
             int pagination = (pageHeight-1)*9+3;
@@ -262,6 +259,7 @@ public class GuiRenderer extends AbstractMenuRenderer {
             paintTracker.remove(SlotPos.of(4,pageHeight-1));
             paintTracker.remove(SlotPos.of(5,pageHeight-1));
         }
+        //background
         BackgroundProvider provider = menu.getBackground();
         if (provider == null) provider = BackgroundProvider.BACKGROUND_DEFAULT;
         for (SlotPos p : paintTracker) {

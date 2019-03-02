@@ -92,12 +92,12 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
     }
 
     @Override
-    public IIcon getIcon(StateObject menuState, StateObject viewerState) {
+    public IIcon getIcon(Player viewer) {
         return icons.get(value+1);
     }
 
     @Override
-    public Text getName(StateObject menuState, StateObject viewerState) {
+    public Text getName(Player viewer) {
         return defaultName;
     }
 
@@ -108,7 +108,7 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
      * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
      */
     @Override
-    public List<Text> getLore(StateObject menuState, StateObject viewerState) {
+    public List<Text> getLore(Player viewer) {
         Text t = getValue()==0
                 ? Text.of(TextColors.RED, "Deactivated")
                 : (getValue()==1
@@ -183,10 +183,10 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
     //endregion
 
     @Override
-    public Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
-        IIcon icon = getIcon(menuState, viewerState);
-        List<Text> lore = getLore(menuState, viewerState);
-        Text display = getName(menuState, viewerState);
+    public Text renderTUI(Player viewer) {
+        IIcon icon = getIcon(viewer);
+        List<Text> lore = getLore(viewer);
+        Text display = getName(viewer);
         int val = getValue();
         display = Text.builder()
                 .append(Text.of("["+(val==1?"\u2611":(val==0?"\u2612":"\u2610"))+"] ",display))
@@ -203,7 +203,7 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
                             .add(Keys.ITEM_LORE, sublore)
                             .build().createSnapshot())
                             : TextActions.showText(Text.of(
-                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(menuState, viewerState))
+                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(viewer))
                     ))
             ).onClick(TextActions.executeCallback((src)->{
                 RenderManager.getRenderFor((Player)src)

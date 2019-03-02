@@ -1,6 +1,7 @@
 package de.dosmike.sponge.megamenus.impl;
 
 import com.google.common.collect.ImmutableMap;
+import de.dosmike.sponge.megamenus.MegaMenus;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
@@ -270,4 +271,5 @@ public class BoundMenuImpl implements IMenu {
     public BaseMenuImpl getBaseMenu() {
         return menu;
     }
+
 }

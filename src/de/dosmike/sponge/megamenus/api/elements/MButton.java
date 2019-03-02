@@ -48,12 +48,12 @@ final public class MButton extends IElementImpl implements IClickable {
     }
 
     @Override
-    public IIcon getIcon(StateObject menuState, StateObject viewerState) {
+    public IIcon getIcon(Player viewer) {
         return defaultIcon;
     }
 
     @Override
-    public Text getName(StateObject menuState, StateObject viewerState) {
+    public Text getName(Player viewer) {
         return defaultName;
     }
 
@@ -64,7 +64,7 @@ final public class MButton extends IElementImpl implements IClickable {
      * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
      */
     @Override
-    public List<Text> getLore(StateObject menuState, StateObject viewerState) {
+    public List<Text> getLore(Player viewer) {
         return defaultLore;
     }
 
@@ -137,10 +137,10 @@ final public class MButton extends IElementImpl implements IClickable {
     //endregion
 
     @Override
-    public Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
-        IIcon icon = getIcon(menuState, viewerState);
-        List<Text> lore = getLore(menuState, viewerState);
-        Text display = getName(menuState, viewerState);
+    public Text renderTUI(Player viewer) {
+        IIcon icon = getIcon(viewer);
+        List<Text> lore = getLore(viewer);
+        Text display = getName(viewer);
         display = Text.builder()
                 .append(display)
                 .style(TextStyles.of(TextStyles.ITALIC, TextStyles.UNDERLINE))

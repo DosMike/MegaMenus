@@ -30,9 +30,14 @@ final public class RenderManager {
         return Optional.empty();
     }
     /** this might return a render for each viewer or one render for all viewers depending on
-     * whether the menu is implemented as shared menu or single viewer menu */
+     * whether the menu is implemented as shared menu or single viewer menu.
+     * @return all renderer, where the rendered menu equals the passed menu, or
+     *         (where the rendered menu is a bound instance) the passed menu is the base menu */
     public static Collection<MenuRenderer> getRenderFor(IMenu menu) {
-        return renders.stream().filter(r->r.getMenu().equals(menu)).collect(Collectors.toSet());
+        return renders.stream().filter(r->
+                r.getMenu().equals(menu) ||
+                ((r instanceof BoundMenuImpl) && ((BoundMenuImpl) r).getBaseMenu().equals(menu))
+        ).collect(Collectors.toSet());
     }
     /** When a player changes the target render, they have to be kicked out of all other renders.
      * This will use closeSilent in order to prevent the new targetRender from closing. */

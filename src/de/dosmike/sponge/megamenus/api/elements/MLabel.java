@@ -27,12 +27,12 @@ final public class MLabel extends IElementImpl {
     private List<Text> defaultLore = new LinkedList<>();
 
     @Override
-    public IIcon getIcon(StateObject menuState, StateObject viewerState) {
+    public IIcon getIcon(Player viewer) {
         return defaultIcon;
     }
 
     @Override
-    public Text getName(StateObject menuState, StateObject viewerState) {
+    public Text getName(Player viewer) {
         return defaultName;
     }
 
@@ -43,7 +43,7 @@ final public class MLabel extends IElementImpl {
      * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
      */
     @Override
-    public List<Text> getLore(StateObject menuState, StateObject viewerState) {
+    public List<Text> getLore(Player viewer) {
         return defaultLore;
     }
 
@@ -112,7 +112,7 @@ final public class MLabel extends IElementImpl {
 
 
     @Override
-    public Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
+    public Text renderTUI(Player viewer) {
         if (defaultLore.isEmpty())
             return defaultName;
         else

@@ -119,12 +119,12 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
     }
 
     @Override
-    public IIcon getIcon(StateObject menuState, StateObject viewerState) {
+    public IIcon getIcon(Player viewer) {
         return defaultIcons.get(index);
     }
 
     @Override
-    public Text getName(StateObject menuState, StateObject viewerState) {
+    public Text getName(Player viewer) {
         return defaultName;
     }
 
@@ -135,7 +135,7 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
      * If you do not want this to style your lore overwrite with <code>return defaultValues;</code>
      */
     @Override
-    public List<Text> getLore(StateObject menuState, StateObject viewerState) {
+    public List<Text> getLore(Player viewer) {
         if (defaultValues.size() != defaultIcons.size())
             return defaultValues;
         else {
@@ -226,10 +226,10 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
     //endregion
 
     @Override
-    public Text renderTUI(StateObject menuState, StateObject viewerState, Player viewer) {
-        IIcon icon = getIcon(menuState, viewerState);
-        List<Text> lore = getLore(menuState, viewerState);
-        Text display = getName(menuState, viewerState);
+    public Text renderTUI(Player viewer) {
+        IIcon icon = getIcon(viewer);
+        List<Text> lore = getLore(viewer);
+        Text display = getName(viewer);
         display = Text.builder()
                 .append(Text.of("► ",display))
                 .style(TextStyles.of(TextStyles.ITALIC))
@@ -245,7 +245,7 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
                             .add(Keys.ITEM_LORE, sublore)
                             .build().createSnapshot())
                         : TextActions.showText(Text.of(
-                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(menuState, viewerState))
+                            Text.joinWith(Text.of(Text.NEW_LINE), getLore(viewer))
                     ))
             ).onClick(TextActions.executeCallback((src)->{
                 RenderManager.getRenderFor((Player)src)

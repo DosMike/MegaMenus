@@ -33,7 +33,7 @@ public class BookRenderer extends TextMenuRenderer {
                 return c;
             });
             for(IElement e : elements) {
-                page.append(e.renderTUI(menu.getState(), menu.getPlayerState(viewer.getUniqueId()), viewer), Text.NEW_LINE);
+                page.append(e.renderTUI(viewer), Text.NEW_LINE);
             }
             builder.addPage(page.build());
         }

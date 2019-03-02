@@ -19,11 +19,9 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.SlotPos;
+import org.spongepowered.api.text.Text;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class IElementImpl implements IElement {
 
@@ -43,7 +41,7 @@ public abstract class IElementImpl implements IElement {
 
     @Override
     public void setPosition(@NotNull SlotPos position) {
-        this.pos = position;
+        this.pos = new SlotPos(position.getX(), position.getY());
     }
 
     public void setParent(IMenu menu) {
@@ -58,7 +56,7 @@ public abstract class IElementImpl implements IElement {
     }
 
     @Override
-    public Collection<SlotPos> renderGUI(StateObject menuState, StateObject viewerState, Player viewer)  {
+    public Collection<SlotPos> renderGUI(Player viewer)  {
         Inventory view = viewer.getOpenInventory().get(); //when is this not present?
         /* about openInventoroy().first()
          * This will return the top most inventory, if the user has one of our menus open
@@ -83,21 +81,29 @@ public abstract class IElementImpl implements IElement {
         }
         //convert position to index because slots seem to only retain index
 
-        IIcon icon = getIcon(menuState, viewerState);
+        IIcon icon = getIcon(viewer);
         if (icon != null) {
             Inventory slot = MenuUtil.getSlotByAnyMeans(view, getPosition()).orElse(null);
             if (slot == null || slot.capacity() == 0) {
                 MegaMenus.w("No slot matched position %d,%d", getPosition().getX(), getPosition().getY());
             } else {
-                ItemStack render = ItemStack.builder().fromSnapshot(icon.render())
-                        .add(Keys.DISPLAY_NAME, getName(menuState, viewerState))
-                        .add(Keys.ITEM_LORE, getLore(menuState, viewerState))
-                        .build();
+                ItemStack.Builder builder = ItemStack.builder().fromSnapshot(icon.render());
+                {
+                    Text name = getName(viewer);
+                    if (name != null)
+                        builder.add(Keys.DISPLAY_NAME, name);
+                }
+                {
+                    List<Text> lore = getLore(viewer);
+                    if (lore != null)
+                        builder.add(Keys.ITEM_LORE, getLore(viewer));
+                }
+                ItemStack render = builder.build();
                 if (!exequalitemstack(slot.peek().orElse(ItemStack.empty()),render)) {//stack did change
                     // ignore this if unchanged in order to save network
                     // - less slot transaction are more! :D
                     if (render.getQuantity() == 0 ||
-                            render.getType().equals(ItemTypes.AIR)) {
+                        render.getType().equals(ItemTypes.AIR)) {
                         slot.clear(); //because setting air / empty stacks does nothing
                     } else {
                         slot.set(render);
@@ -128,10 +134,10 @@ public abstract class IElementImpl implements IElement {
     }
 
     @Override
-    public boolean think(AnimationManager animations, StateObject menuState, StateObject viewerState) {
+    public boolean think(AnimationManager animations, Player viewer) {
         boolean hookChange = false;
         if (thinkHook != null) hookChange = animations.singleTick(thinkHook);
-        IIcon icon = getIcon(menuState, viewerState);
+        IIcon icon = getIcon(viewer);
         if (icon != null) hookChange |= animations.singleTick(icon);
         return hookChange;
     }

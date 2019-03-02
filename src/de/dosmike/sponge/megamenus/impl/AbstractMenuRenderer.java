@@ -135,14 +135,15 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
         boolean changed=false;
         for (IElement e : elements) {
             for (Player p : viewers) {
-                changed |= e.think(animations, menu.getState(), menu.getPlayerState(p.getUniqueId()));
+                changed |= e.think(animations, p);
             }
         }
         if (menu.getBackground() != null)
             changed |= animations.singleTick(menu.getBackground());
         if (renderListener != null)
             changed |= renderListener.tick(animations.getDeltaTime(), this, menu);
-        if (changed) valid = false;
+        if (changed)
+            valid = false;
     }
 
     private OnRenderStateListener renderListener = null;

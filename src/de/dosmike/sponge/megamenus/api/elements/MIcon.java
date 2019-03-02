@@ -2,6 +2,7 @@ package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -23,12 +24,12 @@ final public class MIcon extends IElementImpl {
     private List<Text> defaultLore = new LinkedList<>();
 
     @Override
-    public IIcon getIcon(StateObject menuState, StateObject viewerState) {
+    public IIcon getIcon(Player viewer) {
         return defaultIcon;
     }
 
     @Override
-    public Text getName(StateObject menuState, StateObject viewerState) {
+    public Text getName(Player viewer) {
         return defaultName;
     }
 
@@ -39,7 +40,7 @@ final public class MIcon extends IElementImpl {
      * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
      */
     @Override
-    public List<Text> getLore(StateObject menuState, StateObject viewerState) {
+    public List<Text> getLore(Player viewer) {
         return defaultLore;
     }
 

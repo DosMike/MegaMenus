@@ -89,17 +89,17 @@ final public class MSlot extends IElementImpl implements IInventory {
     }
 
     @Override
-    public IIcon getIcon(StateObject menuState, StateObject viewerState) {
+    public IIcon getIcon(Player viewer) {
         return IIcon.of(holding);
     }
 
     @Override
-    public Text getName(StateObject menuState, StateObject viewerState) {
+    public Text getName(Player viewer) {
         return holding.get(Keys.DISPLAY_NAME).orElse(Text.of(holding.getTranslation().get()));
     }
 
     @Override
-    public List<Text> getLore(StateObject menuState, StateObject viewerState) {
+    public List<Text> getLore(Player viewer) {
         return holding.get(Keys.ITEM_LORE).orElseGet(LinkedList::new);
     }
 
