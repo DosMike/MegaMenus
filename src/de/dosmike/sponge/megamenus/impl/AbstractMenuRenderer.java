@@ -15,14 +15,19 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.util.*;
 
-/** Base Implementation for {@link MenuRenderer}
- * @see MenuRenderer */
+/**
+ * Base Implementation for {@link MenuRenderer}
+ * @see MenuRenderer
+ */
 public abstract class AbstractMenuRenderer implements MenuRenderer {
 
     protected Set<Player> viewers = new HashSet<>();
     protected boolean valid = true;
     protected IMenu menu;
 
+    /**
+     * Constructor to set parent and register the renderer against the {@link RenderManager}
+     */
     public AbstractMenuRenderer(IMenu menu) {
         this.menu = menu;
         RenderManager.register(this);
@@ -33,7 +38,6 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
         return menu;
     }
 
-    /** will cause this menu to redraw in the near future */
     @Override
     public void invalidate() {
         valid = false;
@@ -46,12 +50,19 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
         }
     }
 
+    /**
+     * Refresh/redraw this menu for all current viewers
+     */
     synchronized void render() {
         if (!valid) {
             viewers.forEach(this::render);
             valid = true;
         }
     }
+    /**
+     * Invokes this renderer to refresh/redraw the menu for this viewer
+     * @param viewer the player to redraw this menu for
+     */
     abstract void render(Player viewer);
 
     @Override
@@ -109,7 +120,7 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
             MenuUtil.closeInventory(viewer);
         }
     }
-    /** to be called from inventory events - won't close the actual inventory, but will untrack this player*/
+    @Override
     public synchronized void closeSilent(Player viewer) {
         viewers.remove(viewer);
         if (renderListener != null && viewers.contains(viewer)) {

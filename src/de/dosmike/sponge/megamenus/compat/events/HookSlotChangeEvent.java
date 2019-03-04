@@ -2,7 +2,6 @@ package de.dosmike.sponge.megamenus.compat.events;
 
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.elements.MSlot;
-import de.dosmike.sponge.megamenus.api.elements.concepts.IInventory;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.util.SlotChange;
 import org.spongepowered.api.Sponge;

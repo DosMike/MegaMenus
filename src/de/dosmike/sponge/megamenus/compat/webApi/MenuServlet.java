@@ -5,13 +5,7 @@ import valandur.webapi.servlet.base.Permission;
 import valandur.webapi.shadow.io.swagger.annotations.Api;
 import valandur.webapi.shadow.io.swagger.annotations.ApiOperation;
 import valandur.webapi.shadow.io.swagger.models.Response;
-import valandur.webapi.shadow.javax.ws.rs.GET;
-import valandur.webapi.shadow.javax.ws.rs.POST;
-import valandur.webapi.shadow.javax.ws.rs.PUT;
-import valandur.webapi.shadow.javax.ws.rs.DELETE;
-import valandur.webapi.shadow.javax.ws.rs.Path;
-import valandur.webapi.shadow.javax.ws.rs.Produces;
-import valandur.webapi.shadow.javax.ws.rs.PathParam;
+import valandur.webapi.shadow.javax.ws.rs.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +22,7 @@ public class MenuServlet {
     @Path("/menu")
     @Permission({"megamenus","menu","list"})
     @ApiOperation(value = "List menus", notes = "Returns a list of all menus")
-    public Collection<Menu> listMenus() {
+    public Collection<CachedMenu> listMenus() {
         return Collections.EMPTY_SET;
     }
 
@@ -44,7 +38,7 @@ public class MenuServlet {
     @Path("/menu/{mid}")
     @Permission({"megamenus","menu","get"})
     @ApiOperation(value = "Get menu", notes = "Read a menu with all elements")
-    public Menu getMenu(@PathParam("mid") UUID mid)  {
+    public CachedMenu getMenu(@PathParam("mid") UUID mid)  {
         return null;
     }
 
@@ -52,7 +46,7 @@ public class MenuServlet {
     @Path("/menu/{mid}")
     @Permission({"megamenus","menu","update"})
     @ApiOperation(value = "Update menu", notes = "Update a menu title")
-    public Menu setMenu(@PathParam("mid") UUID mid, Menu newMenu)  {
+    public CachedMenu setMenu(@PathParam("mid") UUID mid, CachedMenu newMenu)  {
         return null;
     }
 
@@ -60,7 +54,7 @@ public class MenuServlet {
     @Path("/menu/{mid}")
     @Permission({"megamenus","menu","delete"})
     @ApiOperation(value = "Delete menu", notes = "Deletes a menu")
-    public Menu deleteMenu(@PathParam("mid") UUID mid)  {
+    public CachedMenu deleteMenu(@PathParam("mid") UUID mid)  {
         return null;
     }
     //endregion
@@ -78,7 +72,7 @@ public class MenuServlet {
     @Path("/menu/{mid}/{page}/{x}/{y}")
     @Permission({"megamenus","menu","edit"})
     @ApiOperation(value = "Get menu", notes = "Read a menu with all elements")
-    public Element getElement(@PathParam("mid") UUID mid, @PathParam("page") int page, @PathParam("x") int x, @PathParam("y") int y)  {
+    public CachedElement getElement(@PathParam("mid") UUID mid, @PathParam("page") int page, @PathParam("x") int x, @PathParam("y") int y)  {
         return null;
     }
 
@@ -86,7 +80,7 @@ public class MenuServlet {
     @Path("/menu/{mid}/{page}/{x}/{y}")
     @Permission({"megamenus","menu","edit"})
     @ApiOperation(value = "Update menu", notes = "Update a menu element")
-    public Element setElement(@PathParam("mid") UUID mid, @PathParam("page") int page, @PathParam("x") int x, @PathParam("y") int y, Element newMenu)  {
+    public CachedElement setElement(@PathParam("mid") UUID mid, @PathParam("page") int page, @PathParam("x") int x, @PathParam("y") int y, CachedElement newMenu)  {
         return null;
     }
 
@@ -94,7 +88,7 @@ public class MenuServlet {
     @Path("/menu/{mid}/{page}/{x}/{y}")
     @Permission({"megamenus","menu","edit"})
     @ApiOperation(value = "Delete menu", notes = "Deletes a menu element")
-    public Element deleteElement(@PathParam("mid") UUID mid, @PathParam("page") int page, @PathParam("x") int x, @PathParam("y") int y)  {
+    public CachedElement deleteElement(@PathParam("mid") UUID mid, @PathParam("page") int page, @PathParam("x") int x, @PathParam("y") int y)  {
         return null;
     }
     //endregion
@@ -104,7 +98,7 @@ public class MenuServlet {
     @Path("/renderer")
     @Permission({"megamenus","renderer","list"})
     @ApiOperation(value = "List renderer", notes = "Returns a list of all renderer")
-    public Collection<Renderer> listRenderer() {
+    public Collection<CachedRenderer> listRenderer() {
         return Collections.EMPTY_SET;
     }
 
@@ -122,14 +116,14 @@ public class MenuServlet {
     @Path("/renderer/{mid}")
     @Permission({"megamenus","renderer","get"})
     @ApiOperation(value = "Get all renderer for the menu", notes = "Returns all renderer currently present for this menu")
-    public Collection<Renderer> getRenderer(@PathParam("mid") UUID mid)  {
+    public Collection<CachedRenderer> getRenderer(@PathParam("mid") UUID mid)  {
         return null;
     }
     @GET
     @Path("/renderer/{viewer}")
     @Permission({"megamenus","renderer","get"})
     @ApiOperation(value = "Get the renderer for viewer", notes = "Returns the renderer the viewer is currently subject to")
-    public Renderer gerRenderer(@PathParam("viewer") CachedPlayer viewer)  {
+    public CachedRenderer gerRenderer(@PathParam("viewer") CachedPlayer viewer)  {
         return null;
     }
 
@@ -137,7 +131,7 @@ public class MenuServlet {
     @Path("/renderer/{rid}/{viewer}")
     @Permission({"megamenus","renderer","open"})
     @ApiOperation(value = "Open renderer", notes = "Opens the renderer to viewer, effectively opening the menu")
-    public Renderer openRenderer(@PathParam("mid") UUID mid)  {
+    public CachedRenderer openRenderer(@PathParam("mid") UUID mid)  {
         return null;
     }
 
@@ -145,7 +139,7 @@ public class MenuServlet {
     @Path("/renderer/{rid}/{viewer}")
     @Permission({"megamenus","renderer","close"})
     @ApiOperation(value = "Close renderer", notes = "Close the renderer for this viewer")
-    public Renderer closeRenderer(@PathParam("mid") UUID mid)  {
+    public CachedRenderer closeRenderer(@PathParam("mid") UUID mid)  {
         return null;
     }
 
@@ -153,7 +147,7 @@ public class MenuServlet {
     @Path("/renderer/{mid}")
     @Permission({"megamenus","renderer","close"})
     @ApiOperation(value = "Delete menu", notes = "Closes this renderer for all currently active viewers")
-    public Renderer deleteRenderer(@PathParam("mid") UUID mid)  {
+    public CachedRenderer deleteRenderer(@PathParam("mid") UUID mid)  {
         return null;
     }
     //endregion

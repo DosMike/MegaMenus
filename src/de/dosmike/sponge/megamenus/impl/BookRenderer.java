@@ -10,6 +10,10 @@ import org.spongepowered.api.text.Text;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Basic implementation of Rendering the menu in a BookView
+ * @see de.dosmike.sponge.megamenus.api.MenuRenderer
+ */
 public class BookRenderer extends TextMenuRenderer {
 
     @SuppressWarnings("deprecation")

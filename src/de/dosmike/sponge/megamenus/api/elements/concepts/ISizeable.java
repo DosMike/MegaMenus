@@ -2,7 +2,8 @@ package de.dosmike.sponge.megamenus.api.elements.concepts;
 
 import org.spongepowered.api.item.inventory.property.SlotPos;
 
-/** for Gui Elements that span more than 1 inventory slot */
+/** for Gui Elements that span more than 1 inventory slot.
+ * <b>This is currently unused</b> */
 public interface ISizeable extends IElement {
 
     int getWidth();

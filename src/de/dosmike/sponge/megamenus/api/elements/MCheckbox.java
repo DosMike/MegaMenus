@@ -1,11 +1,9 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
-import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
-import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -25,8 +23,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** This element displays a tri-state that toggles when clicking on it.
- * A Player can only toggle between true and false. */
+/**
+ * This element displays a tri-state that toggles when clicking on it.
+ * A Player can only toggle between true and false.
+ */
 final public class MCheckbox extends IElementImpl implements IClickable, IValueChangeable<Integer> {
 
     private List<IIcon> icons = Arrays.asList(
@@ -40,7 +40,6 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
     private Text defaultName = Text.of(getClass().getSimpleName());
     private List<Text> defaultLore = new LinkedList<>();
 
-    /** performs the internal progress fo the cyclic element and calls external listener */
     @Override
     public void fireClickEvent(Player viewer, int button, boolean shift) {
         int pre = getValue();
@@ -59,13 +58,16 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
 
     /**
      * Values: 1 selected, 0 not selected, -1 tri-state
+     * @return the current value for this element
      */
     public int getValue() {
         return value;
     }
 
     /**
-     * Values: 1 selected, 0 not selected, -1 tri-state
+     * Values: 1 selected, 0 not selected, -1 tri-state<br>
+     * Changes the value without notifying listener
+     * @param value the new value for this element
      */
     public void setValue(int value) {
         if (value < -1 || value > 1)
@@ -73,9 +75,6 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
         this.value = value;
     }
 
-    /**
-     * Invoking this manually will cause the cyclic element to progress and call the change listener as well
-     */
     @Override
     public OnClickListener getOnClickListerner() {
         return clickListener;
@@ -102,10 +101,8 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
     }
 
     /**
-     * The default implementation highlights the line with the same position ans the selected value
-     * if the number of lines in this lore equals the number of possible values. Otherwise the set lore
-     * is returned unmodified.
-     * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
+     * Highlights the line with the same position ans the selected value if the number of lines
+     * in this lore equals the number of possible values. Otherwise the set lore is returned unmodified.
      */
     @Override
     public List<Text> getLore(Player viewer) {
@@ -122,11 +119,17 @@ final public class MCheckbox extends IElementImpl implements IClickable, IValueC
         return lore;
     }
 
-    /** set the name for this element */
+    /**
+     * set the name for this element
+     * @param name the new display value for this element
+     */
     public void setName(Text name) {
         defaultName = name;
     }
-    /** set the lore for this element */
+    /**
+     * set the lore for this element
+     * @param lore a list containing the lines in the item lore
+     */
     public void setLore(List<Text> lore) {
         defaultLore = new LinkedList<>(lore);
     }

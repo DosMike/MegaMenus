@@ -2,7 +2,6 @@ package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
-import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -20,7 +19,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** This element acts like a button, it can be clicked at and performs an action. */
+/**
+ * This element acts like a button, it can be clicked at and performs an action.
+ */
 final public class MButton extends IElementImpl implements IClickable {
 
     private IIcon defaultIcon = null;
@@ -28,9 +29,6 @@ final public class MButton extends IElementImpl implements IClickable {
     private Text defaultName = Text.of(getClass().getSimpleName());
     private List<Text> defaultLore = new LinkedList<>();
 
-    /**
-     * Invoking this manually will cause the cyclic element to progress and call the change listener as well
-     */
     @Override
     public OnClickListener getOnClickListerner() {
         return clickListener;
@@ -57,26 +55,29 @@ final public class MButton extends IElementImpl implements IClickable {
         return defaultName;
     }
 
-    /**
-     * The default implementation highlights the line with the same position ans the selected value
-     * if the number of lines in this lore equals the number of possible values. Otherwise the set lore
-     * is returned unmodified.
-     * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
-     */
     @Override
     public List<Text> getLore(Player viewer) {
         return defaultLore;
     }
 
-    /** set the icon for this element */
+    /**
+     * set the icon for this element
+     * @param icon the new {@link IIcon} to display
+     */
     public void setIcon(IIcon icon) {
         defaultIcon = icon;
     }
-    /** set the name for this element */
+    /**
+     * set the name for this element
+     * @param name the new display value for this element
+     */
     public void setName(Text name) {
         defaultName = name;
     }
-    /** set the lore for this element */
+    /**
+     * set the lore for this element
+     * @param lore a list containing the lines in the item lore
+     */
     public void setLore(List<Text> lore) {
         defaultLore = new LinkedList<>(lore);
     }

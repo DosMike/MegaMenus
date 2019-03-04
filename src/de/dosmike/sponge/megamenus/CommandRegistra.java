@@ -7,6 +7,9 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+
+import java.io.IOException;
 
 final public class CommandRegistra {
 
@@ -35,8 +38,23 @@ final public class CommandRegistra {
                         return CommandResult.success();
                     }))
                     .build(), "pardon")
+                .child(CommandSpec.builder()
+                    .description(Text.of("Reloads the configuration"))
+                    .permission("megamenus.command.reload")
+                    .arguments(GenericArguments.none())
+                    .executor(((src, args) -> {
+                        try {
+                            MegaMenus.getInstance().loadConfig();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            throw new CommandException(Text.of(TextColors.RED, e.getMessage()));
+                        }
+                        src.sendMessage(Text.of(TextColors.GREEN, "MegaMenus reloaded"));
+                        return CommandResult.success();
+                    }))
+                    .build(), "reload")
                 .executor((src,args)->{
-                    throw new CommandException(Text.of("Missing subcommand"));
+                    throw new CommandException(Text.of("Missing sub-command (pardon, reload)"));
                 }).build(), "megamenus", "mm");
         //endregion
     }

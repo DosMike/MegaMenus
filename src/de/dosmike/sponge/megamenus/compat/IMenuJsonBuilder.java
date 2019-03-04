@@ -36,7 +36,7 @@ public class IMenuJsonBuilder {
      * Json syntax:
      * <pre>
      *     {
-     *         "title": "&-esacped string",
+     *         "title": "&amp;-esacped string",
      *         "page,x,y": { element definition },
      *         "page,x,y": { element definition },
      *         ...
@@ -73,14 +73,14 @@ public class IMenuJsonBuilder {
      * {
      *   "type": "icon|button|checkbox|spinner|slot",   # only one
      *   "icon": &lt; icon definition &gt;           # for type button|icon
-     *   "name": "&-escaped string"            # not for type slot
-     *   "lore": "&-escaped string"            # not for type slot
+     *   "name": "&amp;-escaped string"            # not for type slot
+     *   "lore": "&amp;-escaped string"            # not for type slot
      *   "values": [ &lt; icon definition &gt; ]     # for type spinner
      *   "access": "put|take"                  # for type slot; either "", "put", "take", or "put|take"
      * }
      * </pre>
-     * Elements are binding different sponge events to element action listeners where applicable:
      * <table>
+     * <caption>Elements are binding different sponge events to element action listeners where applicable:</caption>
      * <tr><td>icon</td><td>-</td></tr>
      * <tr><td>button</td><td>{@link HookButtonClickEvent}</td></tr>
      * <tr><td>checkbox</td><td>{@link HookValueChangeEvent}&lt;Integer&gt;</td></tr>

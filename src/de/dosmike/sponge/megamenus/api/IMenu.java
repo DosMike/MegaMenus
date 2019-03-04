@@ -19,6 +19,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * The menu is a collection of {@link IElement}s that are bound to the menu and spread
+ * across pages. In addition to elements the menu also contains {@link StateObject}s for
+ * the menu itself and each player that might interact with the menu.<br>
+ * The rendering mechanism is not important to the menu itself, it only provides the
+ * structure and functionality for the menu.<br>
+ * Copying a menu will copy every element and state, while creating a bound instance will
+ * only copy the elements and still reference the base menus states.
+ */
 public interface IMenu extends Identifiable {
 
     /** @return the current title for this menu */
@@ -49,7 +58,7 @@ public interface IMenu extends Identifiable {
      */
     int pages();
     /**
-     * @return et all elements for one page
+     * @return get all elements for one page
      */
     Collection<IElement> getPageElements(int page);
 
@@ -94,27 +103,77 @@ public interface IMenu extends Identifiable {
      */
     void remove(int page, SlotPos pos);
     /**
-     * completely remove the page other pages
+     * completely remove the page. other pages where the page number &gt;
+     * page will move up with their page being reduced by 1.<br>
+     * this allows clearing all pages with <pre>while (pages()&gt;0) removePage(1);</pre>
+     * @param page the page to remove
      */
     void removePage(int page);
     //endregion
 
     //region states
+    /**
+     * Menu states are copied into copies and children, meaning base values are
+     * present in copies, but changes within the states of copies are not
+     * reflected in the base state
+     * @return the global State object for this menu
+     */
     StateObject getState();
+    /**
+     * Menu states are copied into copies and children, meaning base values are
+     * present in copies, but changes within the states of copies are not
+     * reflected in the base state
+     * @return the player specific State object for this menu
+     */
     StateObject getPlayerState(UUID playerID);
+    /**
+     * Convenience method for getPlayerState(Player::getUniqueId())
+     * Menu states are copied into copies and children, meaning base values are
+     * present in copies, but changes within the states of copies are not
+     * reflected in the base state
+     * @return the player specific State object for this menu
+     */
+    default StateObject getPlayerState(Player player) {
+        return getPlayerState(player.getUniqueId());
+    }
 
+    /**
+     * @return a immutable copy of the player states mapped to player ids
+     */
     ImmutableMap<UUID, StateObject> getPlayerStateMapCopy();
 
+    /**
+     * replace the global state object for this menu
+     * @param state the new state object
+     */
     void setState(StateObject state);
-
+    /**
+     * replace a players state object for this menu
+     * @param playerID the player to replace the state for
+     * @param object the new state object for the player
+     */
     void setPlayerState(UUID playerID, StateObject object);
 
+    /**
+     * Batch-replaces all given player state objects
+     * @param states a map with all player state objects to replace
+     */
     void importPlayerStateMap(Map<UUID, StateObject> states);
 
+    /**
+     * Remove all entries from the current global state object
+     */
     void clearState();
 
+    /**
+     * Remove all entries from the current players state object
+     * @param playerID the player to remove all entries for
+     */
     void clearPlayerState(UUID playerID);
 
+    /**
+     * Remove all entries from all player state objects
+     */
     void clearPlayerStateMap();
     //endregion
 
@@ -124,25 +183,29 @@ public interface IMenu extends Identifiable {
      * @param pageHeight is the number of rows per page in the inventory including the
      *                   pagination row.
      * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu
+     *              player-bound instance of this menu. If you create a menu dynamically for
+     *              a player it's better to not create a bound renderer.
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     MenuRenderer createGuiRenderer(int pageHeight, boolean bound);
 
     /**
-     * Create a new {@link BookRenderer} that will handle events and book view updates.<br>
-     * A book has a limited line-count of 15!
+     * Create a new {@link BookRenderer} that will handle events and view updates.<br>
+     * A book has a fixed page height of 15 lines!
      * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu
+     *              player-bound instance of this menu. If you create a menu dynamically for
+     *              a player it's better to not create a bound renderer.
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     MenuRenderer createBookRenderer(boolean bound);
 
     /**
-     * Create a new {@link ChatRenderer} that will handle events and book view updates.<br>
-     * @param pageHeight is the number of lines per page in the chat pagination including.
+     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
+     * @param pageHeight is the number of rows per page in the inventory including the
+     *                   pagination row.
      * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu
+     *              player-bound instance of this menu. If you create a menu dynamically for
+     *              a player it's better to not create a bound renderer.
      * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     MenuRenderer createChatRenderer(int pageHeight, boolean bound);
@@ -166,5 +229,10 @@ public interface IMenu extends Identifiable {
     }
     //endregion
 
+    /**
+     * Creates a copy of this menu, copying all states, elements and properties into a new menu.<br>
+     * All {@link IElement} implementations will usually change IDs after copying.
+     * @return a copy of this menu with equal elements, states and title
+     */
     IMenu copy();
 }

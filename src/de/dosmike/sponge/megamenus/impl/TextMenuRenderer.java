@@ -7,6 +7,10 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import java.awt.event.MouseEvent;
 
+/**
+ * Shared implementation for all textual rendering
+ * @see de.dosmike.sponge.megamenus.api.MenuRenderer
+ */
 public abstract class TextMenuRenderer extends AbstractMenuRenderer {
 
     @Deprecated

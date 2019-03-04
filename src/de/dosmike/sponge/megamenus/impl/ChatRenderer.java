@@ -10,6 +10,10 @@ import org.spongepowered.api.text.Text;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Base implementation for rendering a menu into chat
+ * @see de.dosmike.sponge.megamenus.api.MenuRenderer
+ */
 public class ChatRenderer extends TextMenuRenderer {
 
     int pageHeight;

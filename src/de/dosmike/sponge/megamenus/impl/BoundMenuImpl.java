@@ -1,7 +1,6 @@
 package de.dosmike.sponge.megamenus.impl;
 
 import com.google.common.collect.ImmutableMap;
-import de.dosmike.sponge.megamenus.MegaMenus;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
@@ -9,18 +8,20 @@ import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
-import org.intellij.lang.annotations.MagicConstant;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-/** a bound menu implementation allows for menu {@link IElement} to not only render differently
+/**
+ * A bound menu implementation allows for menu {@link IElement} to not only render differently
  * for each viewer, but also to store different values for each element by creating functional
  * duplicates. (Every element gets copied).<br>
  * Changes to the {@link BoundMenuImpl} IElements are <b>NOT</b> reflected onto the {@link BaseMenuImpl} and vice versa.<br>
- * The menu {@link StateObject}s are still shared with the BaseMenuImpl. */
+ * The menu {@link StateObject}s are still shared with the BaseMenuImpl.
+ * @see IMenu
+ */
 public class BoundMenuImpl implements IMenu {
 
     private BaseMenuImpl menu;
@@ -67,17 +68,11 @@ public class BoundMenuImpl implements IMenu {
     protected int pagecount = 1;
     protected Map<Integer, List<IElement>> pageelements = new HashMap<>();
 
-    /**
-     * returns the amount of pages.
-     * this value will automatically be set by the highest page an element was added to.
-     */
     @Override
     public int pages() {
         return pagecount;
     }
-    /**
-     * Get all elements for one page
-     */
+
     @Override
     public Collection<IElement> getPageElements(int page) {
         return pageelements.getOrDefault(page, new LinkedList<>());
@@ -197,11 +192,7 @@ public class BoundMenuImpl implements IMenu {
 
     //region rendering
     /**
-     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
-     * @param pageheight is the number of rows per page in the inventory including the
-     *                   pagination row.
      * @param bound not applicable, has to be false
-     * @throws ObjectBuilderException when elements are placed below the displayable area.
      */
     @SuppressWarnings("deprecation")
     @Override
@@ -214,11 +205,7 @@ public class BoundMenuImpl implements IMenu {
         return new GuiRenderer(this, pageheight);
     }
     /**
-     * Create a new {@link BookRenderer} that will handle events and view updates.<br>
-     * A book has a fixed page height of 15 lines!
-     * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu
-     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     * @param bound not applicable, has to be false
      */
     @SuppressWarnings("deprecation")
     @Override
@@ -229,12 +216,7 @@ public class BoundMenuImpl implements IMenu {
         return new BookRenderer(this);
     }
     /**
-     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
-     * @param pageHeight is the number of rows per page in the inventory including the
-     *                   pagination row.
-     * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu
-     * @throws ObjectBuilderException when elements are placed below the displayable area.
+     * @param bound not applicable, has to be false
      */
     @SuppressWarnings("deprecation")
     @Override
@@ -250,8 +232,9 @@ public class BoundMenuImpl implements IMenu {
     //endregion
 
     /**
-     * creates a new {@link BoundMenuImpl} with the same {@link BaseMenuImpl} as
-     * source */
+     * @return a new {@link BoundMenuImpl} with the same {@link BaseMenuImpl} as
+     * source
+     */
     @Override
     public IMenu copy() {
         return new BoundMenuImpl(menu);

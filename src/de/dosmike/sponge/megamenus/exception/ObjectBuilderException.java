@@ -1,7 +1,7 @@
 package de.dosmike.sponge.megamenus.exception;
 
 /** This Exception is meant to be thrown if a Builder or builder-like method
- * can not finish returning a valid Object due to missconfiguration of the builder
+ * can not finish returning a valid Object due to misconfiguration of the builder
  * caused by the application/user. */
 public class ObjectBuilderException extends RuntimeException {
     public ObjectBuilderException() {

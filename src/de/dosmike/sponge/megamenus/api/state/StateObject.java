@@ -8,8 +8,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
-/** this is a generic state that can be attached to a menu. It is meant to store smaller data.
- * Generally these states do not persis, but you can get and set them to menus at any time. */
+/**
+ * This is a generic state that can be attached to a menu. It is meant to store smaller data.
+ * Generally these states do not persis, but you can get and set them to menus at any time.
+ */
 final public class StateObject implements Serializable {
 
     private Map<String, Serializable> state = new HashMap<>();

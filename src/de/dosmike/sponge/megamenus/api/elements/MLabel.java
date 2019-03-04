@@ -1,15 +1,12 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
-import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.TextActions;
 
 import java.util.LinkedList;
@@ -36,26 +33,29 @@ final public class MLabel extends IElementImpl {
         return defaultName;
     }
 
-    /**
-     * The default implementation highlights the line with the same position ans the selected value
-     * if the number of lines in this lore equals the number of possible values. Otherwise the set lore
-     * is returned unmodified.
-     * If you do not want this to style your lore overwrite with <code>return defaultLore;</code>
-     */
     @Override
     public List<Text> getLore(Player viewer) {
         return defaultLore;
     }
 
-    /** set the icon for this element */
+    /**
+     * set the icon for this element
+     * @param icon the new {@link IIcon} to display
+     */
     public void setIcon(IIcon icon) {
         defaultIcon = icon;
     }
-    /** set the name for this element */
+    /**
+     * set the name for this element
+     * @param name the new display value for this element
+     */
     public void setName(Text name) {
         defaultName = name;
     }
-    /** set the lore for this element */
+    /**
+     * set the lore for this element
+     * @param lore a list containing the lines in the item lore
+     */
     public void setLore(List<Text> lore) {
         defaultLore = new LinkedList<>(lore);
     }

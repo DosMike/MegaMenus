@@ -9,9 +9,11 @@ import org.spongepowered.api.item.inventory.transaction.SlotTransaction;
 
 import java.util.Optional;
 
-/** This class is a delta representation of a sponge slot transaction
+/**
+ * This class is a delta representation of a sponge slot transaction
  * since i often do not care what the original / result stack was, but what was
- * actually table/put into the slot. */
+ * actually taken/put into the slot.
+ */
 final public class SlotChange {
 
     private ItemStackSnapshot take;
@@ -27,23 +29,37 @@ final public class SlotChange {
         this.transaction = originalTransaction;
     }
 
-    /** @return the Type and amount of items taken from the slot if any */
+    /**
+     * @return the Type and amount of items taken from the slot if any
+     */
     public Optional<ItemStackSnapshot> getItemsTaken() {
         return Optional.ofNullable(take);
     }
-    /** @return the Type and amount of items put into the slot if any */
+    /**
+     * @return the Type and amount of items put into the slot if any
+     */
     public Optional<ItemStackSnapshot> getItemsGiven() {
         return Optional.ofNullable(put);
     }
-    /** @return the Slot this interaction occured on */
+    /**
+     * @return the Slot this interaction occured on
+     */
     public SlotPos getSlot() {
         return position;
     }
-    /** @return the slot transaction responsible for this SlotChange for invalidation */
+    /**
+     * @return the slot transaction responsible for this SlotChange for invalidation
+     */
     public SlotTransaction getTransaction() {
         return transaction;
     }
 
+    /**
+     * Builder method for SlotChanges from {@link SlotTransaction}s<br>
+     * Will determine the taken and put items and construct a new SlotChange.
+     * @param transaction the SlotTransaction to build upon
+     * @return the SlotChange representation
+     */
     public static SlotChange from(SlotTransaction transaction) {
         SlotChange change = new SlotChange();
 

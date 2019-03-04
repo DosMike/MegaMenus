@@ -5,7 +5,6 @@ import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
-import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -25,8 +24,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** This element displays a cyclic value. Compared to the checkbox this can have more values
- * and custom icons (icons won't display in text UIs) */
+/**
+ * This element displays a cyclic value. Compared to the checkbox this can have more values
+ * and custom icons (icons won't display in text UIs)
+ */
 final public class MSpinner extends IElementImpl implements IClickable, IValueChangeable<Text> {
 
     private int index=0;
@@ -36,7 +37,6 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
     private List<IIcon> defaultIcons = new LinkedList<>();
     private List<Text> defaultValues = new LinkedList<>();
 
-    /** performs the internal progress fo the cyclic element and calls external listener */
     @Override
     public void fireClickEvent(Player viewer, int button, boolean shift) {
         Text oldValue = getValue();
@@ -77,27 +77,49 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
             changeListener.onValueChange(oldValue, getValue(), MSpinner.this, v);
     };
 
+    /**
+     * The currently selected index in this spinner as offset to the first value
+     * @return the current value
+     */
     public int getSelectedIndex() {
         return index;
     }
 
+    /**
+     * @return the maximum index as amount of values - 1
+     */
     public int getMaximumIndex() {
         return defaultIcons.size()-1;
     }
 
+    /**
+     * Updates the spinners current index without invoking events
+     * @param value the new index to display
+     */
     public void setSelectedIndex(int value) {
         if (value < 0 || value >= defaultIcons.size())
             throw new IllegalArgumentException("Cyclic value out of range (0.."+ defaultIcons.size());
         index = value;
     }
 
+    /**
+     * @return the {@link Text} value for the currently selected index
+     */
     public Text getValue() {
         return defaultValues.get(getSelectedIndex());
     }
+    /**
+     * Peeks the next {@link Text} value in the cycle
+     * @return the value that will be displayed after the current one
+     */
     public Text getNextValue() {
         int i = getSelectedIndex()+1;
         return defaultValues.get(i>getMaximumIndex()?0:i);
     }
+    /**
+     * Peeks the previous {@link Text} value in the cycle
+     * @return the value that was displayed prior to the current one
+     */
     public Text getPreviousValue() {
         int i = getSelectedIndex()-1;
         return defaultValues.get(i<0?getMaximumIndex():i);
@@ -149,11 +171,18 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
         }
     }
 
-    /** set the name for this element */
+    /**
+     * set the name for this element
+     * @param name the new display value for this element
+     */
     public void setName(Text name) {
         defaultName = name;
     }
-    /** set the lore for this element */
+    /**
+     * set the lore for this element.<br>
+     * The number of element should match the amount of icons as the lines double as values
+     * @param lore a list containing the lines in the item lore
+     */
     public void setLore(List<Text> lore) {
         defaultValues = new LinkedList<>(lore);
     }

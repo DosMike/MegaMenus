@@ -10,18 +10,27 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A collection of ItemStackSnapshots the can be rendered as static or animated icon
+ * in GUI menus
+ */
 public interface IIcon extends Tickable {
 
+    /**
+     * @return the ItemStackSnapshot represented by this IIcon for the current frame within the animation
+     */
     ItemStackSnapshot render();
-    /** might be called before render() to notify animated icons in order to render the correct frame */
+    /**
+     * might be called before render() to notify animated icons in order to render the correct frame
+     */
     default boolean tick(int ms) {
         return false;
     }
 
     //Region builder
     /**
-     * A convenience builder for animated IIcons.
-     * Specify the item snapshots and frequency and the rest should automatically be handled.
+     * A convenience builder for animated IIcons.<br>
+     * Specify the item snapshots and frequency and the rest should automatically be handled.<br>
      * The animation will play at a constant rate.
      */
     class Builder {
@@ -85,7 +94,6 @@ public interface IIcon extends Tickable {
             frameTime = (int)(1000/framesPerSecond);
             return this;
         }
-
 
         public IIcon build() {
             return new IIcon() {

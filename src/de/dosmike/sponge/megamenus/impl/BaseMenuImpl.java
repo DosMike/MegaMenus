@@ -13,7 +13,9 @@ import org.spongepowered.api.text.Text;
 
 import java.util.*;
 
-/** This menu implementation shares values and elements between every renderer and viewer accessing it */
+/**
+ * This menu implementation shares values and elements between every renderer and viewer accessing it
+ */
 public class BaseMenuImpl implements IMenu {
 
     private Text title = Text.EMPTY;
@@ -34,16 +36,11 @@ public class BaseMenuImpl implements IMenu {
         this.title = title;
     }
 
-    /**
-     * @return the {@link BackgroundProvider} for this menu
-     */
     @Override
     public BackgroundProvider getBackground() {
         return bg;
     }
-    /**
-     * Sets the {@link BackgroundProvider} for this menu
-     */
+
     @Override
     public void setBackgroundProvider(BackgroundProvider background) {
         bg = background;
@@ -53,17 +50,11 @@ public class BaseMenuImpl implements IMenu {
     protected int pagecount = 1;
     protected Map<Integer, List<IElement>> pageelements = new HashMap<>();
 
-    /**
-     * returns the amount of pages.
-     * this value will automatically be set by the highest page an element was added to.
-     */
     @Override
     public int pages() {
         return pagecount;
     }
-    /**
-     * Get all elements for one page
-     */
+
     @Override
     public Collection<IElement> getPageElements(int page) {
         return pageelements.getOrDefault(page, new LinkedList<>());
@@ -88,6 +79,11 @@ public class BaseMenuImpl implements IMenu {
         this.putOnPage(page, elements);
     }
 
+    /**
+     * internal shared implementation to put elements on a page. check must already have happened
+     * @param page the target page
+     * @param element the elements to put on the page
+     */
     private void putOnPage(Integer page, Collection<? extends IElement> element) {
         if (page > pagecount) pagecount = page;
         List<IElement> pe = pageelements.getOrDefault(page, new LinkedList<>());
@@ -181,15 +177,6 @@ public class BaseMenuImpl implements IMenu {
     //endregion
 
     //region rendering
-    /**
-     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
-     * @param pageHeight is the number of rows per page in the inventory including the
-     *                   pagination row.
-     * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu. If you create a menu dynamically for
-     *              a player it's better to not create a bound renderer.
-     * @throws ObjectBuilderException when elements are placed below the displayable area.
-     */
     @SuppressWarnings("deprecation")
     @Override
     public MenuRenderer createGuiRenderer(int pageHeight, boolean bound) {
@@ -201,14 +188,6 @@ public class BaseMenuImpl implements IMenu {
 
         return new GuiRenderer(this, pageHeight);
     }
-    /**
-     * Create a new {@link BookRenderer} that will handle events and view updates.<br>
-     * A book has a fixed page height of 15 lines!
-     * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu. If you create a menu dynamically for
-     *              a player it's better to not create a bound renderer.
-     * @throws ObjectBuilderException when elements are placed below the displayable area.
-     */
     @SuppressWarnings("deprecation")
     @Override
     public MenuRenderer createBookRenderer(boolean bound) {
@@ -218,15 +197,6 @@ public class BaseMenuImpl implements IMenu {
 
         return new BookRenderer(this);
     }
-    /**
-     * Create a new {@link GuiRenderer} that will handle events and inventory updates.
-     * @param pageHeight is the number of rows per page in the inventory including the
-     *                   pagination row.
-     * @param bound if true this will create a copy of all elements to draw a non-shared,
-     *              player-bound instance of this menu. If you create a menu dynamically for
-     *              a player it's better to not create a bound renderer.
-     * @throws ObjectBuilderException when elements are placed below the displayable area.
-     */
     @SuppressWarnings("deprecation")
     @Override
     public MenuRenderer createChatRenderer(int pageHeight, boolean bound) {

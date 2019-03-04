@@ -10,8 +10,6 @@ import de.dosmike.sponge.megamenus.api.elements.MSlot;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IInventory;
-import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
-import de.dosmike.sponge.megamenus.api.listener.OnSlotChangeListener;
 import de.dosmike.sponge.megamenus.api.state.StateProperties;
 import de.dosmike.sponge.megamenus.impl.util.MenuUtil;
 import de.dosmike.sponge.megamenus.impl.util.SlotChange;
@@ -32,15 +30,26 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * This renderer draws the menu into a GUI of type Menu Grid.
+ * If more than 1 page is specified the bottom, center 3 inventory slots
+ * are automatically reserved for pagination elements.
+ * @see MenuRenderer
+ */
 public class GuiRenderer extends AbstractMenuRenderer {
 
     private int pageHeight;
-    /** Please use BaseMenuImpl.createGuiRender() instead for validation */
+    /**
+     * Please use BaseMenuImpl.createGuiRender() instead for validation
+     */
     @Deprecated
     public GuiRenderer(IMenu menu, int pageHeight) {
         super(menu);

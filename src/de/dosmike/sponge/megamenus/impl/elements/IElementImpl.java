@@ -6,7 +6,6 @@ import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.IIcon;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
-import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.api.util.Tickable;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
 import de.dosmike.sponge.megamenus.impl.AnimationManager;
@@ -23,6 +22,9 @@ import org.spongepowered.api.text.Text;
 
 import java.util.*;
 
+/**
+ * Base implementation of {@link IElement}s
+ */
 public abstract class IElementImpl implements IElement {
 
     private SlotPos pos = new SlotPos(0,0);
@@ -44,6 +46,11 @@ public abstract class IElementImpl implements IElement {
         this.pos = new SlotPos(position.getX(), position.getY());
     }
 
+    /**
+     * Called by the menu when the element gets added to it. Allows the element to reference the
+     * menu it belongs to through .getParent(), results in element only being usable on one menu.
+     * @param menu the menu this element was added to
+     */
     public void setParent(IMenu menu) {
         if (this.parent != null && menu != null)
             throw new ObjectBuilderException("This Element is already bound to a menu");
@@ -60,12 +67,12 @@ public abstract class IElementImpl implements IElement {
         Inventory view = viewer.getOpenInventory().get(); //when is this not present?
         /* about openInventoroy().first()
          * This will return the top most inventory, if the user has one of our menus open
-         * it will be the menu we created and thus have out plugin id bound to it.
+         * it will be the menu we created and thus have our plugin id bound to it.
          * if it's the player inventory or some other menu/mod inventory this will 100% be
          * missing and thus is probably the most reliable way in API 7 to tell, if we're
          * currently inside out inventory.
          * This check is requried in order to prevent "rendering" the menu into the player
-         * menu once the renderer is closed since the player inventory slots will ALSO start
+         * inv once the renderer is closed since the player inventory slots will ALSO start
          * from 0, so the slot alone is insufficient.
          * Since the custom inventory does not seem to properly provide slot positions it'll
          * only be used for plugin id compares.
@@ -113,6 +120,9 @@ public abstract class IElementImpl implements IElement {
         }
         return Collections.singleton(getPosition());
     }
+    /**
+     * Properly checks for empty stacks
+     */
     private boolean exequalitemstack(ItemStack a, ItemStack b) {
         if (a.getQuantity() == 0 && b.getQuantity() == 0) return true;
         return a.equalTo(b);

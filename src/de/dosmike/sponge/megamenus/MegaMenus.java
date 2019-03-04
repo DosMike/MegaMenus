@@ -1,17 +1,26 @@
 package de.dosmike.sponge.megamenus;
 
+import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
 import de.dosmike.sponge.megamenus.impl.BaseMenuImpl;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.scheduler.Task;
+
+import java.io.IOException;
+import java.net.ConnectException;
 
 @Plugin(id="megamenus", name="Mega Menus", version="0.1", authors={"DosMike"})
 final public class MegaMenus {
@@ -59,6 +68,35 @@ final public class MegaMenus {
                 e.printStackTrace();
             }
         }).submit(this);
+
+        try {
+            loadConfig();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Inject
+    @DefaultConfig(sharedRoot = true)
+    public ConfigurationLoader<CommentedConfigurationNode> loader;
+
+    void loadConfig() throws IOException {
+        CommentedConfigurationNode root = loader.load(ConfigurationOptions.defaults());
+        ConfigurationLoader<CommentedConfigurationNode> defaults =
+                HoconConfigurationLoader.builder()
+                        .setURL(Sponge.getAssetManager()
+                                .getAsset(this, "defaults.conf").get()
+                                .getUrl())
+                        .build();
+        root.mergeValuesFrom(defaults.load(ConfigurationOptions.defaults()));
+        loader.save(root);
+
+        ConfigurationNode group = root.getNode("antiglitch");
+        AntiGlitch.setup(
+                group.getNode("enabled").getBoolean(true),
+                group.getNode("maxAPS").getInt(10),
+                group.getNode("timePeriod").getInt(250)
+        );
     }
 
     /**
