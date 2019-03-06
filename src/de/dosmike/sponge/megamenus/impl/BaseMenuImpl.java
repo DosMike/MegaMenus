@@ -20,11 +20,11 @@ public class BaseMenuImpl implements IMenu {
 
     private Text title = Text.EMPTY;
     private BackgroundProvider bg = BackgroundProvider.BACKGROUND_DEFAULT;
-    private UUID uiid = UUID.randomUUID();
+    private UUID uuid = UUID.randomUUID();
 
     @Override
     public UUID getUniqueId() {
-        return uiid;
+        return uuid;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package de.dosmike.sponge.megamenus.compat;
 
 /**
- * This stuff is currently highly WIP!
- * Do not rely on this!
+ * This package currently features a compatibility API
+ * for managing menus with WebAPI by Valandur
  */
 

@@ -56,6 +56,10 @@ public class GuiRenderer extends AbstractMenuRenderer {
         this.pageHeight = pageHeight;
     }
 
+    public int getPageHeight() {
+        return pageHeight;
+    }
+
     private void soon(Runnable r) {
         Task.builder().delayTicks(1).execute(r).submit(MegaMenus.getInstance());
     }

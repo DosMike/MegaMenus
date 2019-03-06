@@ -1,6 +1,5 @@
 package de.dosmike.sponge.megamenus;
 
-import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
 import de.dosmike.sponge.megamenus.impl.BaseMenuImpl;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -20,9 +20,8 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 
 import java.io.IOException;
-import java.net.ConnectException;
 
-@Plugin(id="megamenus", name="Mega Menus", version="0.1", authors={"DosMike"})
+@Plugin(id="megamenus", name="Mega Menus", version="0.2", authors={"DosMike"})
 final public class MegaMenus {
     public static void main(String[] args) { System.err.println("This plugin can not be run as executable!"); }
 
@@ -54,6 +53,15 @@ final public class MegaMenus {
     public void onServerPreInit(GamePreInitializationEvent event) {
         instance = this;
         Sponge.getEventManager().registerListeners(this, new EventListeners());
+    }
+
+    @Listener
+    public void onServerPostInit(GamePostInitializationEvent event) {
+        try {
+            Class.forName("valandur.webapi.WebAPI");
+            w("  Registering into WebAPI...");
+            new de.dosmike.sponge.megamenus.compat.webApi.Initializer().init(this);
+        } catch (ClassNotFoundException ignored) { }
     }
 
     @Listener
