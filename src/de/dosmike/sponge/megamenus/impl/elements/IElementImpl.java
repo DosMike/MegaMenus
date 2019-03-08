@@ -105,7 +105,16 @@ public abstract class IElementImpl implements IElement {
                     if (lore != null)
                         builder.add(Keys.ITEM_LORE, getLore(viewer));
                 }
-                ItemStack render = builder.build();
+                ItemStack render;
+                if ((getAccess() & GUI_ACCESS_TAKE)>0) {
+                    render = builder.build();
+                } else { //The user is not allowed to take items from this slot
+                    //Inject some custom NBT to be able to detect these again
+                    render = ItemStack.builder()
+                            .fromContainer(builder.build().toContainer()
+                                    .set(AntiGlitch.inject, true)
+                            ).build();
+                }
                 if (!exequalitemstack(slot.peek().orElse(ItemStack.empty()),render)) {//stack did change
                     // ignore this if unchanged in order to save network
                     // - less slot transaction are more! :D

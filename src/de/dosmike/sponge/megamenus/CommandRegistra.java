@@ -6,6 +6,8 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -56,6 +58,21 @@ final public class CommandRegistra {
                 .executor((src,args)->{
                     throw new CommandException(Text.of("Missing sub-command (pardon, reload)"));
                 }).build(), "megamenus", "mm");
+        //endregion
+
+        //region DELETEME
+        Sponge.getCommandManager().register(MegaMenus.getInstance(), CommandSpec.builder()
+                .executor((src, args)->{
+                    if (!(src instanceof Player))
+                        throw new CommandException(Text.of("You shall not pass"));
+                    ItemStack glitch = ItemStack.builder()
+                            .fromContainer(ItemStack.of(ItemTypes.STONE).toContainer()
+                                    .set(AntiGlitch.inject, true)
+                            ).build();
+                    ((Player) src).getInventory().offer(glitch);
+                    return CommandResult.success();
+                }).build(),
+                "glitch");
         //endregion
     }
 

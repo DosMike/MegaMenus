@@ -80,7 +80,6 @@ public class GuiRenderer extends AbstractMenuRenderer {
                 event.setCancelled(true);
             }
             if (event instanceof ClickInventoryEvent) {
-                AntiGlitch.quickInteractionTrack(viewer);
                 RenderManager.getRenderFor(viewer)
                         .filter(r->r instanceof GuiRenderer)
                         .map(r->(GuiRenderer)r)
@@ -248,7 +247,6 @@ public class GuiRenderer extends AbstractMenuRenderer {
                 }
             });
         if (!RenderManager.getRenderFor(viewer).map(MenuRenderer::getMenu).filter(m->m.equals(menu)).isPresent()) {
-            AntiGlitch.quickInteractionTrack(viewer);
             rendering.set(false);
             return;
         }
@@ -277,7 +275,6 @@ public class GuiRenderer extends AbstractMenuRenderer {
         if (provider == null) provider = BackgroundProvider.BACKGROUND_DEFAULT;
         for (SlotPos p : paintTracker) {
             if (!RenderManager.getRenderFor(viewer).map(MenuRenderer::getMenu).filter(m->m.equals(menu)).isPresent()) {
-                AntiGlitch.quickInteractionTrack(viewer);
                 break;
             }
             IIcon at = provider.drawAt(p, menu.getState(), menu.getPlayerState(viewer.getUniqueId()));

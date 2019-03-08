@@ -21,7 +21,7 @@ import org.spongepowered.api.scheduler.Task;
 
 import java.io.IOException;
 
-@Plugin(id="megamenus", name="Mega Menus", version="0.2", authors={"DosMike"})
+@Plugin(id="megamenus", name="Mega Menus", version="0.3", authors={"DosMike"})
 final public class MegaMenus {
     public static void main(String[] args) { System.err.println("This plugin can not be run as executable!"); }
 
@@ -59,7 +59,7 @@ final public class MegaMenus {
     public void onServerPostInit(GamePostInitializationEvent event) {
         try {
             Class.forName("valandur.webapi.WebAPI");
-            w("  Registering into WebAPI...");
+            l("  Registering into WebAPI...");
             new de.dosmike.sponge.megamenus.compat.webApi.Initializer().init(this);
         } catch (ClassNotFoundException ignored) { }
     }
@@ -90,20 +90,23 @@ final public class MegaMenus {
 
     void loadConfig() throws IOException {
         CommentedConfigurationNode root = loader.load(ConfigurationOptions.defaults());
-        ConfigurationLoader<CommentedConfigurationNode> defaults =
-                HoconConfigurationLoader.builder()
-                        .setURL(Sponge.getAssetManager()
-                                .getAsset(this, "defaults.conf").get()
-                                .getUrl())
-                        .build();
-        root.mergeValuesFrom(defaults.load(ConfigurationOptions.defaults()));
-        loader.save(root);
 
         ConfigurationNode group = root.getNode("antiglitch");
+        if (group.isVirtual()) {
+            ConfigurationLoader<CommentedConfigurationNode> defaults =
+                    HoconConfigurationLoader.builder()
+                            .setURL(Sponge.getAssetManager()
+                                    .getAsset(this, "defaults.conf").get()
+                                    .getUrl())
+                            .build();
+            root.mergeValuesFrom(defaults.load(ConfigurationOptions.defaults()));
+            loader.save(root);
+        }
+
         AntiGlitch.setup(
                 group.getNode("enabled").getBoolean(true),
-                group.getNode("maxAPS").getInt(10),
-                group.getNode("timePeriod").getInt(250)
+                group.getNode("notifyAdmins").getBoolean(true),
+                group.getNode("verboseLogging").getBoolean(true)
         );
     }
 
