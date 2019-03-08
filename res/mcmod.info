@@ -1,0 +1,10 @@
+[{
+  "modid": "megamenus",
+  "name": "Mega Menus",
+  "description": "Menus that do more",
+  "version": "0.3",
+  "url": "",
+  "authorList": [ "DosMike" ],
+  "requiredMods": [ "spongeapi@7.0.0" ],
+  "dependencies": [ "spongeapi@7.0.0" ]
+}]
