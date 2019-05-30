@@ -109,7 +109,7 @@ public class GuiRenderer extends AbstractMenuRenderer {
         //shadow local menu, because interaction handler should always use the menu from the open render
         IMenu menu = render.getMenu();
         //get the element
-        Set<IElement> elements = MenuUtil.getElementsAtPosition(
+        Set<IElement> elements = MenuUtil.getAllElementsAt(
                 menu,
                 menu.getPlayerState(viewer.getUniqueId()).getInt(StateProperties.PAGE).orElse(1),
                 slot.getSlot());
@@ -234,18 +234,18 @@ public class GuiRenderer extends AbstractMenuRenderer {
                 .getPlayerState(viewer.getUniqueId())
                 .getInt(StateProperties.PAGE)
                 .orElse(1);
-        menu.getPageElements(page)
-            .forEach(element-> {
-                try {
-                    element.validateGui(pageHeight);
-                    paintTracker.removeAll(
-                            element.renderGUI(viewer)
-                    );
-                } catch (Exception e) {
-                    rendering.set(false);
-                    new RuntimeException("Unable to render Element "+element.getUniqueId().toString(), e).printStackTrace();
-                }
-            });
+        for (IElement element : menu.getPageElements(page)) {
+            if (isClosedByAPI(viewer)) return;
+            try {
+                element.validateGui(pageHeight);
+                paintTracker.removeAll(
+                    element.renderGUI(viewer)
+                );
+            } catch (Exception e) {
+                rendering.set(false);
+                new RuntimeException("Unable to render Element "+element.getUniqueId().toString(), e).printStackTrace();
+            }
+        }
         if (!RenderManager.getRenderFor(viewer).map(MenuRenderer::getMenu).filter(m->m.equals(menu)).isPresent()) {
             rendering.set(false);
             return;
@@ -281,7 +281,11 @@ public class GuiRenderer extends AbstractMenuRenderer {
             if (at == null)
                 view.query(p).clear();
             else
-                view.query(p).set(at.render().createStack());
+                view.query(p).set(ItemStack.builder()
+                        .fromContainer(at.render().toContainer()
+                                .set(AntiGlitch.inject, true)
+                        ).build()
+                );
         }
         rendering.set(false);
     }

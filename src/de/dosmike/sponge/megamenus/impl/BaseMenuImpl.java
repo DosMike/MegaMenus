@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
+import de.dosmike.sponge.megamenus.api.elements.PositionProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
@@ -20,6 +21,7 @@ public class BaseMenuImpl implements IMenu {
 
     private Text title = Text.EMPTY;
     private BackgroundProvider bg = BackgroundProvider.BACKGROUND_DEFAULT;
+    private PositionProvider positionProvider = PositionProvider.DEFAULT_ROWS;
     private UUID uuid = UUID.randomUUID();
 
     @Override
@@ -44,6 +46,11 @@ public class BaseMenuImpl implements IMenu {
     @Override
     public void setBackgroundProvider(BackgroundProvider background) {
         bg = background;
+    }
+
+    @Override
+    public void setPositionProvider(PositionProvider provider) {
+        this.positionProvider = provider;
     }
 
     //region menu elements
@@ -79,6 +86,7 @@ public class BaseMenuImpl implements IMenu {
         this.putOnPage(page, elements);
     }
 
+    private Map<Integer, SlotPos> lastPutPosition = new HashMap<>();
     /**
      * internal shared implementation to put elements on a page. check must already have happened
      * @param page the target page
@@ -88,8 +96,17 @@ public class BaseMenuImpl implements IMenu {
         if (page > pagecount) pagecount = page;
         List<IElement> pe = pageelements.getOrDefault(page, new LinkedList<>());
         for (IElement elem : element)
-            if (elem instanceof IElementImpl) //bind the element to this menu
-                ((IElementImpl)elem).setParent(this);
+            if (elem instanceof IElementImpl) {
+                //bind the element to this menu
+                ((IElementImpl) elem).setParent(this);
+                //create a position, if missing
+                SlotPos pos = elem.getPosition();
+                if (pos == null) {
+                    pos = positionProvider.next(lastPutPosition.get(page));
+                    elem.setPosition(pos);
+                }
+                lastPutPosition.put(page, pos);
+            }
         pe.addAll(element);
         pageelements.put(page, pe);
     }

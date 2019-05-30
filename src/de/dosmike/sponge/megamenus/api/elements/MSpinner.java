@@ -2,6 +2,7 @@ package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
@@ -60,21 +61,21 @@ final public class MSpinner extends IElementImpl implements IClickable, IValueCh
             changeListener.onValueChange(oldValue, newValue, this, viewer);
     }
     private OnClickListener internalClickListener = (e, v, b, s) -> {
-        Text oldValue = getValue();
-        if (b==MouseEvent.BUTTON1) {
-            int i = getSelectedIndex();
-            setSelectedIndex(i >= getMaximumIndex() ? 0 : (i + 1));
+        Text oldValue = MSpinner.this.getValue();
+        if (b == MouseEvent.BUTTON1) {
+            int i = MSpinner.this.getSelectedIndex();
+            MSpinner.this.setSelectedIndex(i >= MSpinner.this.getMaximumIndex() ? 0 : (i + 1));
             RenderManager.getRenderFor(v).ifPresent(MenuRenderer::invalidate);
-        } else if (b==MouseEvent.BUTTON2) {
-            int i = getSelectedIndex();
-            setSelectedIndex(i <= 0 ? getMaximumIndex() : (i - 1));
+        } else if (b == MouseEvent.BUTTON2) {
+            int i = MSpinner.this.getSelectedIndex();
+            MSpinner.this.setSelectedIndex(i <= 0 ? MSpinner.this.getMaximumIndex() : (i - 1));
             RenderManager.getRenderFor(v).ifPresent(MenuRenderer::invalidate);
         }
         if (clickListener != null) {
             clickListener.onClick(e, v, b, s);
         }
         if (changeListener != null)
-            changeListener.onValueChange(oldValue, getValue(), MSpinner.this, v);
+            changeListener.onValueChange(oldValue, MSpinner.this.getValue(), MSpinner.this, v);
     };
 
     /**

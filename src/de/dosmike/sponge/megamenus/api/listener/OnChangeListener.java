@@ -1,5 +1,6 @@
 package de.dosmike.sponge.megamenus.api.listener;
 
+import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -21,6 +22,6 @@ public interface OnChangeListener<V> {
      * @param element the element that was clicked itself
      * @param viewer the player that clicked the element
      */
-    void onValueChange(V oldValue, V newValue, IValueChangeable<V> element, Player viewer);
+    void onValueChange(V oldValue, V newValue, IElement element, Player viewer);
 
 }

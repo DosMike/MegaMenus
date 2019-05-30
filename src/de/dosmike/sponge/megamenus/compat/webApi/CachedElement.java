@@ -1,13 +1,18 @@
 package de.dosmike.sponge.megamenus.compat.webApi;
 
 import de.dosmike.sponge.megamenus.api.elements.*;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
+import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
+import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
 import de.dosmike.sponge.megamenus.compat.events.ContextKeys;
 import de.dosmike.sponge.megamenus.compat.events.MenuButtonClickEvent;
 import de.dosmike.sponge.megamenus.compat.events.MenuSlotChangeEvent;
 import de.dosmike.sponge.megamenus.compat.events.MenuValueChangeEvent;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
@@ -153,9 +158,9 @@ public class CachedElement extends CachedObject<IElement> {
                     builder.setLore(getLore().stream().map(TextSerializers.FORMATTING_CODE::deserialize).collect(Collectors.toList()));
                 if (getAccess()!=null)
                     throw new BadRequestException("Icons can't take any `access`: Integer");
-                builder.setOnClickListener((element, player, button, shift) ->{
+                builder.setOnClickListener((element, player, button, shift) -> {
                     try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                        IElementImpl elem = (IElementImpl)element;
+                        IElementImpl elem = (IElementImpl) element;
                         frame.addContext(ContextKeys.menuID, elem.getParent().getUniqueId());
                         frame.addContext(ContextKeys.menuColumn, elem.getPosition().getX());
                         frame.addContext(ContextKeys.menuRow, elem.getPosition().getY());
@@ -179,12 +184,12 @@ public class CachedElement extends CachedObject<IElement> {
                     throw new BadRequestException("Icons can't take any `access`: Integer");
                 builder.setOnChangeListener((oldValue, newValue, element, viewer) -> {
                     try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                        IElementImpl elem = (IElementImpl)element;
+                        IElementImpl elem = (IElementImpl) element;
                         frame.addContext(ContextKeys.menuID, elem.getParent().getUniqueId());
                         frame.addContext(ContextKeys.menuColumn, elem.getPosition().getX());
                         frame.addContext(ContextKeys.menuRow, elem.getPosition().getY());
                         frame.addContext(ContextKeys.targetValue, newValue);
-                        Sponge.getEventManager().post(new MenuValueChangeEvent<>(oldValue, newValue, (MCheckbox)element, viewer, frame.getCurrentCause()));
+                        Sponge.getEventManager().post(new MenuValueChangeEvent<>(oldValue, newValue, (MCheckbox) element, viewer, frame.getCurrentCause()));
                     }
                 });
                 ielement = builder.build();

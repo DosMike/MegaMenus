@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
+import de.dosmike.sponge.megamenus.api.elements.PositionProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
@@ -62,6 +63,11 @@ public class BoundMenuImpl implements IMenu {
     @Override
     public void setBackgroundProvider(BackgroundProvider background) {
         menu.setBackgroundProvider(background);
+    }
+
+    @Override
+    public void setPositionProvider(PositionProvider provider) {
+        menu.setPositionProvider(provider);
     }
 
     //region menu elements

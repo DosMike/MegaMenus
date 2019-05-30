@@ -80,14 +80,19 @@ public abstract class IElementImpl implements IElement {
         if (!view.first().getPlugin().getId().equals(MegaMenus.getInstance().asContainer().getId())) {
             return Collections.emptyList();
         }
-        Optional<IMenu> menu = RenderManager.getRenderFor(viewer).map(MenuRenderer::getMenu);
-        if (!menu.isPresent() || !menu.get().equals(getParent())) {
+        Optional<MenuRenderer> renderer = RenderManager.getRenderFor(viewer);
+        if (renderer.isPresent() && renderer.get().isClosedByAPI(viewer)) {
+            return Collections.emptyList();
+        }
+        Optional<IMenu> menu = renderer.map(MenuRenderer::getMenu);
+        if ((!menu.isPresent() || !menu.get().equals(getParent()))) {
             MegaMenus.w("Menu was closed or changed during render");
             AntiGlitch.calloutGlitcher(viewer);
             return Collections.emptyList();
         }
         //convert position to index because slots seem to only retain index
-
+        SlotPos renderAt = getPosition();
+        //if (renderAt == null) getParent()
         IIcon icon = getIcon(viewer);
         if (icon != null) {
             Inventory slot = MenuUtil.getSlotByAnyMeans(view, getPosition()).orElse(null);

@@ -76,6 +76,10 @@ public interface MenuRenderer {
      */
     IMenu getMenu();
 
+    /** @return true if the renderer was closed by the api and should prevent anti-glitch
+     *          triggers if another menu was opened while this menu rendered */
+    boolean isClosedByAPI(Player player);
+
     /**
      * this method shall update all animated IElements within the menu.
      * @param animations is a tracker to prevent double frame advancement for shared anim objects
