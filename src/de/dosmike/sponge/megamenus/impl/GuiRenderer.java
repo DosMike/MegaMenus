@@ -26,6 +26,7 @@ import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.property.SlotPos;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
@@ -185,7 +186,15 @@ public class GuiRenderer extends AbstractMenuRenderer {
 
     @Override
     synchronized void render(Player viewer) {
-        boolean inventoryPresent = viewer.getOpenInventory().get().first().getPlugin().getId().equals(MegaMenus.getInstance().asContainer().getId());
+        Optional<Inventory> openInventory = viewer.getOpenInventory().map(Inventory::first);
+        PluginContainer plugin=null;
+        try {
+            if (openInventory.isPresent()) plugin = openInventory.get().getPlugin();
+        } catch (AssertionError e) {
+            MegaMenus.w("Can't resolve inventory source: %s", e.getMessage());
+            e.printStackTrace();
+        }
+        boolean inventoryPresent = plugin != null && plugin.getId().equals(MegaMenus.getInstance().asContainer().getId());
         Optional<MenuRenderer> render = RenderManager.getRenderFor(viewer);
         if (!render.isPresent()) {
             //open the inventory to the player if no menu was already open
