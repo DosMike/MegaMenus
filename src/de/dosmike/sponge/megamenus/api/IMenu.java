@@ -53,6 +53,7 @@ public interface IMenu extends Identifiable {
 
     /**
      * Sets the position provider, that automatically positions elements in a menu upon adding them.
+     * Calling this function will reset any previously tracked position throughout the menu.
      * @param provider the new {@link PositionProvider}
      */
     void setPositionProvider(PositionProvider provider);

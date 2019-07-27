@@ -50,6 +50,7 @@ public class BaseMenuImpl implements IMenu {
 
     @Override
     public void setPositionProvider(PositionProvider provider) {
+        lastPutPosition.clear();
         this.positionProvider = provider;
     }
 
@@ -142,7 +143,17 @@ public class BaseMenuImpl implements IMenu {
                     ((IElementImpl)element).setParent(null);
             }));
         for (int i = page+1; i <= pagecount; i++) {
-            pageelements.put(i-1, pageelements.get(i));
+            List<IElement> pre = pageelements.remove(i);
+            if (pre != null) pageelements.put(i-1, pre);
+        }
+        //fix position tracking
+        List<Integer> keys = new LinkedList<>(lastPutPosition.keySet());
+        keys.removeIf(p->p<=page);
+        Collections.sort(keys);
+        for (Integer k : keys) {
+            //ok, as long as k goes up, since we move elements down
+            SlotPos pre = lastPutPosition.remove(k);
+            if (pre != null) lastPutPosition.put(k-1, pre);
         }
     }
     //endregion
