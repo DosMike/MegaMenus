@@ -29,8 +29,16 @@
         mcmod=JSON.parse(data);
         } // contained in it's own code-block for cleaner variable context
 
-        project.setProperty("my.project.version", mcmod[0].version);
-        project.setProperty("my.project.name", mcmod[0].name);
+        //I've sadly created some un-deletable files already, this should help
+        // prevent this in the future :)
+        if (!(mcmod[0].name.match(/^[^&lt;&gt;:;,?"*|\\/]+$/))) {
+            var fail = project.createTask("fail");
+            fail.setMessage("Your project name can't be used as file name!");
+            fail.perform();
+        } else {
+            project.setProperty("my.project.version", mcmod[0].version);
+            project.setProperty("my.project.name", mcmod[0].name);
+        }
     </script>
 
     <target name="create_jar">

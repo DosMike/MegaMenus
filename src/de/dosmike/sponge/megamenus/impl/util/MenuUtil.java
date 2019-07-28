@@ -26,11 +26,25 @@ final public class MenuUtil {
      * @param pos the x and y coordinates to search for elements
      * @return all elements that occupy pos on the given page in the menu
      */
-    public static Set<IElement> getElementsAtPosition(IMenu menu, int page, SlotPos pos) {
+    public static Set<IElement> getAllElementsAt(IMenu menu, int page, SlotPos pos) {
         Collection<IElement> pageElements = menu.getPageElements(page);
         return pageElements.stream()
                 .filter(e -> ((e instanceof ISizeable) && ((ISizeable)e).containsPosition(pos)) || e.getPosition().equals(pos))
                 .collect(Collectors.toSet());
+    }
+
+    /** Performs the same lookup as getElementsAtPosition, but only returns the first result in case you know that a
+     * position does not contain more than one element at any given time.
+     * @param menu the menu to search for elements
+     * @param page the page to search
+     * @param pos the x and y coordinates to search for elements
+     * @return a single element that occupies pos on the given page in the menu, or empty if no element was present
+     */
+    public static Optional<IElement> getElementAt(IMenu menu, int page, SlotPos pos) {
+        Collection<IElement> pageElements = menu.getPageElements(page);
+        return pageElements.stream()
+                .filter(e -> ((e instanceof ISizeable) && ((ISizeable)e).containsPosition(pos)) || e.getPosition().equals(pos))
+                .findFirst();
     }
 
     /**

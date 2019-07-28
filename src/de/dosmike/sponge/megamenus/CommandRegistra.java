@@ -61,18 +61,18 @@ final public class CommandRegistra {
         //endregion
 
         //region DELETEME
-        Sponge.getCommandManager().register(MegaMenus.getInstance(), CommandSpec.builder()
-                .executor((src, args)->{
-                    if (!(src instanceof Player))
-                        throw new CommandException(Text.of("You shall not pass"));
-                    ItemStack glitch = ItemStack.builder()
-                            .fromContainer(ItemStack.of(ItemTypes.STONE).toContainer()
-                                    .set(AntiGlitch.inject, true)
-                            ).build();
-                    ((Player) src).getInventory().offer(glitch);
-                    return CommandResult.success();
-                }).build(),
-                "glitch");
+//        Sponge.getCommandManager().register(MegaMenus.getInstance(), CommandSpec.builder()
+//                .executor((src, args)->{
+//                    if (!(src instanceof Player))
+//                        throw new CommandException(Text.of("You shall not pass"));
+//                    ItemStack glitch = ItemStack.builder()
+//                            .fromContainer(ItemStack.of(ItemTypes.STONE).toContainer()
+//                                    .set(AntiGlitch.inject, true)
+//                            ).build();
+//                    ((Player) src).getInventory().offer(glitch);
+//                    return CommandResult.success();
+//                }).build(),
+//                "glitch");
         //endregion
     }
 

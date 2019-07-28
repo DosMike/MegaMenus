@@ -24,6 +24,9 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
     protected Set<Player> viewers = new HashSet<>();
     protected boolean valid = true;
     protected IMenu menu;
+    /** flag to notify rendering that closing this menu was done via API, and thus
+     * shall not lead in a anti-glitch trigger */
+    protected Set<UUID> apiClose = new HashSet<>();
 
     /**
      * Constructor to set parent and register the renderer against the {@link RenderManager}
@@ -83,6 +86,7 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
     }
     @Override
     public synchronized void open(Player viewer, boolean doparent) {
+        apiClose.remove(viewer.getUniqueId());
         if (AntiGlitch.isGlitcher(viewer)) {
             viewer.sendMessage(Text.of(TextColors.RED, "You've triggered the anti glitch system. Notify an admin to pardon you for mega menus or wait until the server restarts."));
             MenuUtil.closeInventory(viewer);
@@ -106,6 +110,7 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
 
     @Override
     public synchronized void close(Player viewer) {
+        apiClose.add(viewer.getUniqueId());
         //notify listeners
         if (renderListener != null && viewers.contains(viewer))
             if (renderListener.closed(this, menu, viewer))
@@ -122,6 +127,7 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
     }
     @Override
     public synchronized void closeSilent(Player viewer) {
+        apiClose.add(viewer.getUniqueId());
         viewers.remove(viewer);
         if (renderListener != null && viewers.contains(viewer)) {
             renderListener.closed(this, menu, viewer);
@@ -134,6 +140,10 @@ public abstract class AbstractMenuRenderer implements MenuRenderer {
         for (Player viewer : copy) {
             close(viewer);
         }
+    }
+
+    public boolean isClosedByAPI(Player player) {
+        return apiClose.contains(player.getUniqueId());
     }
 
     @Override

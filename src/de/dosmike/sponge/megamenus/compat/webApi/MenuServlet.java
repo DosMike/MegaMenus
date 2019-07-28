@@ -7,7 +7,6 @@ import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.listener.OnRenderStateListener;
 import de.dosmike.sponge.megamenus.compat.events.ContextKeys;
 import de.dosmike.sponge.megamenus.compat.events.MenuRendererEvent;
-import de.dosmike.sponge.megamenus.impl.AbstractMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.GuiRenderer;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.util.MenuUtil;
@@ -204,7 +203,7 @@ public class MenuServlet extends BaseServlet {
         IMenu menu = menus.get(mid);
 
         return WebAPI.runOnMain(()->
-                MenuUtil.getElementsAtPosition(menu, page, new SlotPos(x,y)).stream()
+                MenuUtil.getAllElementsAt(menu, page, new SlotPos(x,y)).stream()
                         .findFirst()
                         .map(e->new CachedElement(e, page))
                         .orElseThrow(()->
@@ -222,7 +221,7 @@ public class MenuServlet extends BaseServlet {
         IMenu menu = menus.get(mid);
 
         return WebAPI.runOnMain(()->{
-            Set<IElement> elements = MenuUtil.getElementsAtPosition(menu, page, new SlotPos(x, y));
+            Set<IElement> elements = MenuUtil.getAllElementsAt(menu, page, new SlotPos(x, y));
             if (elements.isEmpty()) //POST should have been used, there's nothing here
                 throw new BadRequestException("No element at the specified position");
 
@@ -244,7 +243,7 @@ public class MenuServlet extends BaseServlet {
         IMenu menu = menus.get(mid);
 
         return WebAPI.runOnMain(()->{
-            CachedElement element = MenuUtil.getElementsAtPosition(menu, page, new SlotPos(x,y)).stream()
+            CachedElement element = MenuUtil.getAllElementsAt(menu, page, new SlotPos(x,y)).stream()
                     .findFirst()
                     .map(e->new CachedElement(e, page))
                     .orElseThrow(()->

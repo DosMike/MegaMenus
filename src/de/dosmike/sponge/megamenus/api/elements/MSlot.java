@@ -142,6 +142,7 @@ final public class MSlot extends IElementImpl implements IInventory {
         copy.setPosition(getPosition());
         copy.setParent(getParent());
         copy.slotAccess = slotAccess;
+        copy.listener = listener;
         return copy;
     }
 

@@ -26,6 +26,7 @@ import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.property.SlotPos;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
@@ -109,7 +110,7 @@ public class GuiRenderer extends AbstractMenuRenderer {
         //shadow local menu, because interaction handler should always use the menu from the open render
         IMenu menu = render.getMenu();
         //get the element
-        Set<IElement> elements = MenuUtil.getElementsAtPosition(
+        Set<IElement> elements = MenuUtil.getAllElementsAt(
                 menu,
                 menu.getPlayerState(viewer.getUniqueId()).getInt(StateProperties.PAGE).orElse(1),
                 slot.getSlot());
@@ -185,7 +186,15 @@ public class GuiRenderer extends AbstractMenuRenderer {
 
     @Override
     synchronized void render(Player viewer) {
-        boolean inventoryPresent = viewer.getOpenInventory().get().first().getPlugin().getId().equals(MegaMenus.getInstance().asContainer().getId());
+        Optional<Inventory> openInventory = viewer.getOpenInventory().map(Inventory::first);
+        PluginContainer plugin=null;
+        try {
+            if (openInventory.isPresent()) plugin = openInventory.get().getPlugin();
+        } catch (AssertionError e) {
+            MegaMenus.w("Can't resolve inventory source: %s", e.getMessage());
+            e.printStackTrace();
+        }
+        boolean inventoryPresent = plugin != null && plugin.getId().equals(MegaMenus.getInstance().asContainer().getId());
         Optional<MenuRenderer> render = RenderManager.getRenderFor(viewer);
         if (!render.isPresent()) {
             //open the inventory to the player if no menu was already open
@@ -234,18 +243,18 @@ public class GuiRenderer extends AbstractMenuRenderer {
                 .getPlayerState(viewer.getUniqueId())
                 .getInt(StateProperties.PAGE)
                 .orElse(1);
-        menu.getPageElements(page)
-            .forEach(element-> {
-                try {
-                    element.validateGui(pageHeight);
-                    paintTracker.removeAll(
-                            element.renderGUI(viewer)
-                    );
-                } catch (Exception e) {
-                    rendering.set(false);
-                    new RuntimeException("Unable to render Element "+element.getUniqueId().toString(), e).printStackTrace();
-                }
-            });
+        for (IElement element : menu.getPageElements(page)) {
+            if (isClosedByAPI(viewer)) return;
+            try {
+                element.validateGui(pageHeight);
+                paintTracker.removeAll(
+                    element.renderGUI(viewer)
+                );
+            } catch (Exception e) {
+                rendering.set(false);
+                new RuntimeException("Unable to render Element "+element.getUniqueId().toString(), e).printStackTrace();
+            }
+        }
         if (!RenderManager.getRenderFor(viewer).map(MenuRenderer::getMenu).filter(m->m.equals(menu)).isPresent()) {
             rendering.set(false);
             return;
@@ -254,15 +263,23 @@ public class GuiRenderer extends AbstractMenuRenderer {
         //pagination
         Inventory view = viewer.getOpenInventory().get().first(); //when is this not present?
         if (menu.pages()>1) {
+            ItemStack[] pi = MegaMenus.getPaginationIcons();
             int pagination = (pageHeight-1)*9+3;
             if (page > 1) {
-                view.query(SlotIndex.of(pagination)).set(ItemStack.builder().itemType(ItemTypes.ARROW).add(Keys.DISPLAY_NAME, Text.of("< Back")).build());
+                view.query(SlotIndex.of(pagination)).set(ItemStack.builder().from(pi[0])
+                        .add(Keys.DISPLAY_NAME, Text.of("< Back"))
+                        .build());
             } else {
                 view.query(SlotIndex.of(pagination)).clear();
             }
-            view.query(SlotIndex.of(pagination+1)).set(ItemStack.builder().itemType(ItemTypes.PAPER).add(Keys.DISPLAY_NAME, Text.of("Page ",page,"/",menu.pages())).build());
+            view.query(SlotIndex.of(pagination+1)).set(ItemStack.builder().from(pi[1])
+                    .add(Keys.DISPLAY_NAME, Text.of("Page ",page,"/",menu.pages()))
+                    .quantity(page)
+                    .build());
             if (page < menu.pages()) {
-                view.query(SlotIndex.of(pagination+2)).set(ItemStack.builder().itemType(ItemTypes.ARROW).add(Keys.DISPLAY_NAME, Text.of("Next >")).build());
+                view.query(SlotIndex.of(pagination+2)).set(ItemStack.builder().from(pi[2])
+                        .add(Keys.DISPLAY_NAME, Text.of("Next >"))
+                        .build());
             } else {
                 view.query(SlotIndex.of(pagination+2)).clear();
             }
@@ -281,7 +298,11 @@ public class GuiRenderer extends AbstractMenuRenderer {
             if (at == null)
                 view.query(p).clear();
             else
-                view.query(p).set(at.render().createStack());
+                view.query(p).set(ItemStack.builder()
+                        .fromContainer(at.render().toContainer()
+                                .set(AntiGlitch.inject, true)
+                        ).build()
+                );
         }
         rendering.set(false);
     }

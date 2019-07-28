@@ -3,6 +3,7 @@ package de.dosmike.sponge.megamenus.api;
 import com.google.common.collect.ImmutableMap;
 import de.dosmike.sponge.megamenus.api.elements.BackgroundProvider;
 import de.dosmike.sponge.megamenus.api.elements.IIcon;
+import de.dosmike.sponge.megamenus.api.elements.PositionProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.state.StateObject;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
@@ -49,6 +50,13 @@ public interface IMenu extends Identifiable {
      * @param background a {@link BackgroundProvider} implementation providing {@link IIcon}s for empty slots
      */
     void setBackgroundProvider(BackgroundProvider background);
+
+    /**
+     * Sets the position provider, that automatically positions elements in a menu upon adding them.
+     * Calling this function will reset any previously tracked position throughout the menu.
+     * @param provider the new {@link PositionProvider}
+     */
+    void setPositionProvider(PositionProvider provider);
 
     //region menu elements
 

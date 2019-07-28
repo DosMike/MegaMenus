@@ -1,6 +1,7 @@
 package de.dosmike.sponge.megamenus.api.listener;
 
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import org.intellij.lang.annotations.MagicConstant;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -25,7 +26,7 @@ public interface OnClickListener {
      * @param button the index of the mouse button used, one of {@code MouseEvent.NOBUTTON}, {@code MouseEvent.BUTTON1}, {@code MouseEvent.BUTTON2} or {@code MouseEvent.BUTTON3}
      * @param shift true if shift was held during this click. will always be false for {@code MouseEvent.BUTTON3}
      */
-    void onClick(IClickable element,
+    void onClick(IElement element,
                  Player player,
                  @MagicConstant(intValues = {MouseEvent.NOBUTTON, MouseEvent.BUTTON1, MouseEvent.BUTTON2, MouseEvent.BUTTON3}) int button,
                  boolean shift);

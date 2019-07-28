@@ -1,12 +1,12 @@
 # Mega Menus
 
-This menu API focuses on a fluent experience with redrawing inventories that do 
-not reset the cursor on every click. A inventory menu with this API keeps the 
-player inventory unlocked and thus allowes for the inventory menu to accept and 
+This menu API focuses on a fluent experience with redrawing inventories that **do 
+not reset the cursor on every click**. A inventory menu with this API keeps the 
+**player inventory unlocked** and thus allowes for the inventory menu to accept and 
 output items in a controlled manner.
 
 The API itself was influenced by java AWT/Swing but is Builder oriented.
-Additionally the API will automatically generate pagination for menus with 
+Additionally the API will **automatically generate pagination** for menus with 
 elements put on different pages.
 
 Supported menu elements are:
@@ -16,7 +16,7 @@ Supported menu elements are:
 * Spinner - add a list of values, has a change callback
 * Slot - can provide or accept single stacks of items (not shift-clickable), has a slot chagne callback
 
-Additionally menus hold state objects for the menu and every player in the menu.
+Additionally menus hold **state objects** for the menu and every player in the menu.
 These objects do not reset automatically and are persistent until the menu is 
 GCed. Menus can be rendered as shared, potentially allowing multiple player to 
 interact on the same instance, or create a bound instance, that provides a 
@@ -26,7 +26,8 @@ viewers.
 All Elements on the menu render with Icons, collections of ItemStacks that 
 animates with a given FPS or frametime.
 
-Example:
+My **Minesweeper plugin** is a pretty good demo plugin to get things started, or
+take a look at this (old) example:
 <pre>
 static BaseMenuImpl menu = (BaseMenuImpl)MegaMenus.createMenu();
 static MSlot outSlot = new MSlot(ItemStack.empty());
