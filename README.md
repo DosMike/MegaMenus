@@ -5,6 +5,17 @@ not reset the cursor on every click**. A inventory menu with this API keeps the
 **player inventory unlocked** and thus allowes for the inventory menu to accept and 
 output items in a controlled manner.
 
+# Command for Server Admins
+
+If a player triggered the anti glitch system you can pardon them with  
+`/megamenus pardon <PLAYER>` (permission `megamenus.command.pardon`)  
+If you changed bits in the config you can reload it with  
+`/megamenus reload` (permission `megamenus.command.reload`)
+
+If you don't feel like typing megamenus, `/mm` is a command alias.
+
+# Boring dev stuff
+
 The API itself was influenced by java AWT/Swing but is Builder oriented.
 Additionally the API will **automatically generate pagination** for menus with 
 elements put on different pages.
