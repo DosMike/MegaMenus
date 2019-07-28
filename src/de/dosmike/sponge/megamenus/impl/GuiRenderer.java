@@ -263,15 +263,23 @@ public class GuiRenderer extends AbstractMenuRenderer {
         //pagination
         Inventory view = viewer.getOpenInventory().get().first(); //when is this not present?
         if (menu.pages()>1) {
+            ItemStack[] pi = MegaMenus.getPaginationIcons();
             int pagination = (pageHeight-1)*9+3;
             if (page > 1) {
-                view.query(SlotIndex.of(pagination)).set(ItemStack.builder().itemType(ItemTypes.ARROW).add(Keys.DISPLAY_NAME, Text.of("< Back")).build());
+                view.query(SlotIndex.of(pagination)).set(ItemStack.builder().from(pi[0])
+                        .add(Keys.DISPLAY_NAME, Text.of("< Back"))
+                        .build());
             } else {
                 view.query(SlotIndex.of(pagination)).clear();
             }
-            view.query(SlotIndex.of(pagination+1)).set(ItemStack.builder().itemType(ItemTypes.PAPER).add(Keys.DISPLAY_NAME, Text.of("Page ",page,"/",menu.pages())).build());
+            view.query(SlotIndex.of(pagination+1)).set(ItemStack.builder().from(pi[1])
+                    .add(Keys.DISPLAY_NAME, Text.of("Page ",page,"/",menu.pages()))
+                    .quantity(page)
+                    .build());
             if (page < menu.pages()) {
-                view.query(SlotIndex.of(pagination+2)).set(ItemStack.builder().itemType(ItemTypes.ARROW).add(Keys.DISPLAY_NAME, Text.of("Next >")).build());
+                view.query(SlotIndex.of(pagination+2)).set(ItemStack.builder().from(pi[2])
+                        .add(Keys.DISPLAY_NAME, Text.of("Next >"))
+                        .build());
             } else {
                 view.query(SlotIndex.of(pagination+2)).clear();
             }
