@@ -35,7 +35,7 @@ targetCompatibility = 1.8
 dependencies {
     compile 'org.jetbrains:annotations:16.0.2'
     compile 'org.spongepowered:spongeapi:7.2.0-SNAPSHOT'
-    compile files('../../../libs/webapi-5.4.0-S7.1.jar') //didn't work from git?
+    compile 'com.github.Valandur:Web-API:v5.4.6'
     shadow 'com.github.DosMike:SpongePluginVersionChecker:master-SNAPSHOT'
 }
 
