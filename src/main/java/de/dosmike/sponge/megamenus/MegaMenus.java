@@ -63,15 +63,6 @@ final public class MegaMenus {
     }
 
     @Listener
-    public void onServerPostInit(GamePostInitializationEvent event) {
-        try {
-            Class.forName("valandur.webapi.WebAPI");
-            l("  Registering into WebAPI...");
-            new de.dosmike.sponge.megamenus.compat.webApi.Initializer().init(this);
-        } catch (ClassNotFoundException ignored) { }
-    }
-
-    @Listener
     public void onServerStart(GameStartedServerEvent event) {
         container = Sponge.getPluginManager().fromInstance(this).get();
         CommandRegistra.registerCommands();

@@ -30,6 +30,16 @@ def gnupgDir = 'G:/Sonstige/VanillaSponge/GnuPG'
 sourceCompatibility = 1.8 // java 8
 targetCompatibility = 1.8
 
+
+
+dependencies {
+    compile 'org.jetbrains:annotations:16.0.2'
+    compile 'org.spongepowered:spongeapi:7.2.0-SNAPSHOT'
+    shadow 'com.github.DosMike:SpongePluginVersionChecker:master-SNAPSHOT'
+}
+
+
+
 repositories {
     mavenCentral()
     jcenter()
@@ -39,34 +49,6 @@ configurations {
     //don't get dependencies of these dependencies, would bloat uber jar
     shadow.transitive false
 }
-
-
-def webapi_version = '5.4.6'
-def urlFile = { url, name ->
-    File file = new File("$buildDir/download/${name}.jar")
-    file.parentFile.mkdirs()
-    if (!file.exists()) {
-        def con = (HttpsURLConnection) new URL(url).openConnection()
-        con.setInstanceFollowRedirects(true)
-        con.setDoInput(true)
-        con.setRequestProperty('Accept-Encoding', 'Identity')
-        con.setRequestProperty('User-Agent', "Gradle BuildScript for github.com/dosmike/megamenus ${version}")
-        con.connect()
-        println con.getResponseCode() + " " + con.getResponseMessage()
-        file.withOutputStream { fileOut ->
-            fileOut << con.getInputStream()
-        }
-    }
-    files(file.absolutePath)
-}
-dependencies {
-    compile urlFile("https://github.com/Valandur/Web-API/releases/download/v${webapi_version}/webapi-${webapi_version}-S7.2.0.jar", "webapi-${webapi_version}-S7.2.0")
-    compile 'org.jetbrains:annotations:16.0.2'
-    compile 'org.spongepowered:spongeapi:7.2.0-SNAPSHOT'
-    shadow 'com.github.DosMike:SpongePluginVersionChecker:master-SNAPSHOT'
-}
-
-
 
 task removeOldVersions() {
     def artifactNamePattern = ~"${rootProject.name}-[0-9]+[\\.0-9]*\\.jar"
