@@ -33,8 +33,8 @@ targetCompatibility = 1.8
 
 
 dependencies {
-    compile 'org.jetbrains:annotations:16.0.2'
-    compile 'org.spongepowered:spongeapi:7.2.0-SNAPSHOT'
+    compileOnly 'org.jetbrains:annotations:16.0.2'
+    compileOnly 'org.spongepowered:spongeapi:7.2.0-SNAPSHOT'
     shadow 'com.github.DosMike:SpongePluginVersionChecker:master-SNAPSHOT'
 }
 
