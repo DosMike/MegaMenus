@@ -15,7 +15,6 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.item.ItemType;
@@ -28,7 +27,7 @@ import org.spongepowered.api.scheduler.Task;
 import java.io.IOException;
 import java.nio.file.Path;
 
-@Plugin(id="megamenus", name="Mega Menus", version="0.6", authors={"DosMike"})
+@Plugin(id="megamenus", name="Mega Menus", version="0.7", authors={"DosMike"})
 final public class MegaMenus {
     public static void main(String[] args) { System.err.println("This plugin can not be run as executable!"); }
 

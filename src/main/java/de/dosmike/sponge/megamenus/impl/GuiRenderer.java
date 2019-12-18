@@ -10,6 +10,7 @@ import de.dosmike.sponge.megamenus.api.elements.MSlot;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IInventory;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IPressable;
 import de.dosmike.sponge.megamenus.api.state.StateProperties;
 import de.dosmike.sponge.megamenus.impl.util.MenuUtil;
 import de.dosmike.sponge.megamenus.impl.util.SlotChange;
@@ -68,6 +69,7 @@ public class GuiRenderer extends AbstractMenuRenderer {
         Consumer<InteractInventoryEvent> instanceListener = (event)->{
             Player viewer = event.getCause().first(Player.class).orElse(null);
             if (viewer == null) {
+                MegaMenus.l("No viewer");
                 return;
             }
 
@@ -122,16 +124,10 @@ public class GuiRenderer extends AbstractMenuRenderer {
 
         if (rendering.get()) {
             //prevent events during redraw
-            testChange.getTransaction().setValid(false);
-            event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
-            event.getCursorTransaction().setValid(false);
-            event.setCancelled(true);
+            interactionCancel(testChange, event);
         } else if (menu.pages() > 1 && testChange.getSlot().getY() == pageHeight-1 && testChange.getSlot().getX() >= 3 && testChange.getSlot().getX() <= 5) {
             //automatic pagination buttons
-            testChange.getTransaction().setValid(false);
-            event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
-            event.getCursorTransaction().setValid(false);
-            event.setCancelled(true);
+            interactionCancel(testChange, event);
             int page = menu
                     .getPlayerState(viewer.getUniqueId())
                     .getInt(StateProperties.PAGE)
@@ -145,42 +141,53 @@ public class GuiRenderer extends AbstractMenuRenderer {
             }
         } else if (elements.isEmpty()) {
             //prevent putting items into empty slots
-            testChange.getTransaction().setValid(false);
-            event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
-            event.getCursorTransaction().setValid(false);
-            event.setCancelled(true);
+            interactionCancel(testChange, event);
         } else for (IElement e : elements) {
-            //default actions
-            boolean cancelInventory = false;
-            if ((e.getAccess() & IElement.GUI_ACCESS_TAKE)==0 && testChange.getItemsTaken().map(i->!i.isEmpty()).orElse(false)) {
-                testChange.getTransaction().setValid(false);
-                event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
-                event.getCursorTransaction().setValid(false);
-                event.setCancelled(true);
-                cancelInventory = true;
-            }
-            if ((e.getAccess() & IElement.GUI_ACCESS_PUT)==0 && testChange.getItemsGiven().map(i->!i.isEmpty()).orElse(false)) {
-                testChange.getTransaction().setValid(false);
-                event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
-                event.getCursorTransaction().setValid(false);
-                event.setCancelled(true);
-                cancelInventory = true;
-            }
+            if (event instanceof ClickInventoryEvent.NumberPress) {
+                interactionCancel(testChange, event);
 
-            if (e instanceof IClickable) {
-                int button = MouseEvent.NOBUTTON;
-                if (event instanceof ClickInventoryEvent.Primary) button = MouseEvent.BUTTON1;
-                else if (event instanceof ClickInventoryEvent.Secondary) button = MouseEvent.BUTTON2;
-                else if (event instanceof ClickInventoryEvent.Middle) button = MouseEvent.BUTTON3;
-                ((IClickable)e).fireClickEvent(viewer, button, (event instanceof ClickInventoryEvent.Shift));
-            }
-            if (!cancelInventory && e instanceof IInventory) {
-                if (e instanceof MSlot) {
-                    ((MSlot)e).setItemStack(slot.getTransaction().getFinal());
+                if (e instanceof IPressable)
+                    ((IPressable) e).fireKeyEvent(viewer, IPressable.Buttons.fromNumberPress(((ClickInventoryEvent.NumberPress) event).getNumber()), false);
+            } else if (event instanceof ClickInventoryEvent.Drop) {
+                interactionCancel(testChange, event);
+
+                // Drop.Outside is a mouse action, so discard that here
+                if (e instanceof IPressable && !(event instanceof ClickInventoryEvent.Drop.Outside))
+                    ((IPressable) e).fireKeyEvent(viewer, IPressable.Buttons.DROP, (event instanceof ClickInventoryEvent.Drop.Full));
+            } else {
+                //default actions
+                boolean cancelInventory = false;
+                if ((e.getAccess() & IElement.GUI_ACCESS_TAKE) == 0 && testChange.getItemsTaken().map(i -> !i.isEmpty()).orElse(false)) {
+                    interactionCancel(testChange, event);
+                    cancelInventory = true;
                 }
-                ((IInventory)e).fireSlotChangeEvent(viewer, slot);
+                if ((e.getAccess() & IElement.GUI_ACCESS_PUT) == 0 && testChange.getItemsGiven().map(i -> !i.isEmpty()).orElse(false)) {
+                    interactionCancel(testChange, event);
+                    cancelInventory = true;
+                }
+
+                if (e instanceof IClickable) {
+                    int button = MouseEvent.NOBUTTON;
+                    if (event instanceof ClickInventoryEvent.Primary) button = MouseEvent.BUTTON1;
+                    else if (event instanceof ClickInventoryEvent.Secondary) button = MouseEvent.BUTTON2;
+                    else if (event instanceof ClickInventoryEvent.Middle) button = MouseEvent.BUTTON3;
+                    ((IClickable) e).fireClickEvent(viewer, button, (event instanceof ClickInventoryEvent.Shift));
+                }
+                if (!cancelInventory && e instanceof IInventory) {
+                    if (e instanceof MSlot) {
+                        ((MSlot) e).setItemStack(slot.getTransaction().getFinal());
+                    }
+                    ((IInventory) e).fireSlotChangeEvent(viewer, slot);
+                }
             }
         }
+    }
+    /** prevent repetition with this */
+    private void interactionCancel(SlotChange change, ClickInventoryEvent event) {
+        change.getTransaction().setValid(false);
+        event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
+        event.getCursorTransaction().setValid(false);
+        event.setCancelled(true);
     }
 
     @Override

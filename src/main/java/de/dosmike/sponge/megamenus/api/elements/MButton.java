@@ -1,7 +1,9 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IPressable;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
+import de.dosmike.sponge.megamenus.api.listener.OnKeyListener;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -22,15 +24,16 @@ import java.util.List;
 /**
  * This element acts like a button, it can be clicked at and performs an action.
  */
-final public class MButton extends IElementImpl implements IClickable<MButton> {
+final public class MButton extends IElementImpl implements IClickable<MButton>, IPressable<MButton> {
 
     private IIcon defaultIcon = null;
     private OnClickListener<MButton> clickListener = null;
+    private OnKeyListener<MButton> keyListener = null;
     private Text defaultName = Text.of(getClass().getSimpleName());
     private List<Text> defaultLore = new LinkedList<>();
 
     @Override
-    public OnClickListener<MButton> getOnClickListerner() {
+    public OnClickListener<MButton> getOnClickListener() {
         return clickListener;
     }
 
@@ -43,6 +46,22 @@ final public class MButton extends IElementImpl implements IClickable<MButton> {
     @Override
     public void setOnClickListener(OnClickListener<MButton> listener) {
         clickListener = listener;
+    }
+
+    @Override
+    public OnKeyListener<MButton> getOnKeyListener() {
+        return keyListener;
+    }
+
+    @Override
+    public void fireKeyEvent(Player viewer, Buttons key, boolean ctrl) {
+        if (keyListener != null)
+            keyListener.onKeyPress(this, viewer, key, ctrl);
+    }
+
+    @Override
+    public void setOnKeyListener(OnKeyListener<MButton> listener) {
+        keyListener = listener;
     }
 
     @Override

@@ -1,9 +1,11 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IPressable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
+import de.dosmike.sponge.megamenus.api.listener.OnKeyListener;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -27,7 +29,7 @@ import java.util.List;
  * This element displays a tri-state that toggles when clicking on it.
  * A Player can only toggle between true and false.
  */
-final public class MCheckbox extends IElementImpl implements IClickable<MCheckbox>, IValueChangeable<Integer, MCheckbox> {
+final public class MCheckbox extends IElementImpl implements IClickable<MCheckbox>, IPressable<MCheckbox>, IValueChangeable<Integer, MCheckbox> {
 
     private List<IIcon> icons = Arrays.asList(
             IIcon.of(ItemStack.builder().itemType(ItemTypes.DYE).add(Keys.DYE_COLOR, DyeColors.GRAY).build()),
@@ -36,6 +38,7 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
     );
     private int value =0;
     private OnClickListener<MCheckbox> clickListener = null;
+    private OnKeyListener<MCheckbox> keyListener = null;
     private OnChangeListener<Integer, MCheckbox> changeListener = null;
     private Text defaultName = Text.of(getClass().getSimpleName());
     private List<Text> defaultLore = new LinkedList<>();
@@ -54,6 +57,11 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
     public void fireChangeListener(Player viewer, Integer oldValue, Integer newValue) {
         if (changeListener!=null)
             changeListener.onValueChange(oldValue, newValue, this, viewer);
+    }
+    @Override
+    public void fireKeyEvent(Player viewer, Buttons key, boolean ctrl) {
+        if (keyListener!=null)
+            keyListener.onKeyPress(this, viewer, key, ctrl);
     }
 
     /**
@@ -76,7 +84,7 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
     }
 
     @Override
-    public OnClickListener<MCheckbox> getOnClickListerner() {
+    public OnClickListener<MCheckbox> getOnClickListener() {
         return clickListener;
     }
 
@@ -86,8 +94,23 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
     }
 
     @Override
+    public OnKeyListener<MCheckbox> getOnKeyListener() {
+        return keyListener;
+    }
+
+    @Override
     public void setOnClickListener(OnClickListener<MCheckbox> listener) {
         clickListener = listener;
+    }
+
+    @Override
+    public void setOnChangeListener(OnChangeListener<Integer, MCheckbox> listener) {
+        changeListener = listener;
+    }
+
+    @Override
+    public void setOnKeyListener(OnKeyListener<MCheckbox> listener) {
+        keyListener = listener;
     }
 
     @Override
@@ -132,11 +155,6 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
      */
     public void setLore(List<Text> lore) {
         defaultLore = new LinkedList<>(lore);
-    }
-
-    @Override
-    public void setOnChangeListener(OnChangeListener<Integer, MCheckbox> listener) {
-        changeListener = listener;
     }
 
     public MCheckbox() {}

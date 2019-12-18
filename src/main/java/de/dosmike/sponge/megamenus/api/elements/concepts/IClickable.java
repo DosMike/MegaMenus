@@ -20,7 +20,7 @@ public interface IClickable<X extends IClickable> {
      * that will be used whenever fireClickEvent is invoked.
      * @return The current OnClickListener, or null if no listener was set.
      */
-    OnClickListener<X> getOnClickListerner();
+    OnClickListener<X> getOnClickListener();
 
     /** This method will be called by the {@link MenuRenderer} when the element is clicked.
      * @param viewer the {@link Player} instance that clicked the element in the assigned renderer.
