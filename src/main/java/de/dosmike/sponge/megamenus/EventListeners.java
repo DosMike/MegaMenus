@@ -68,20 +68,21 @@ final public class EventListeners {
     }
 
     // AntiGlitch Measure
-    @Listener(order = Order.EARLY)
-    public void onDropItem(DropItemEvent.Pre event) {
-        Player player = event.getCause().first(Player.class).orElse(null);
-        if (player == null) return;
-        boolean result = false;
-        for (ItemStackSnapshot s : event.getOriginalDroppedItems()) {
-            result |= AntiGlitch.checkItemStack(player, s);
-        }
-        if (result) {
-            // "allow" the item to be dropped, but drop into nothing
-            event.getDroppedItems().clear();
-            AntiGlitch.log(player, event.getOriginalDroppedItems());
-        }
-    }
+    // not necessary anymore - inv scan on close
+//    @Listener(order = Order.EARLY)
+//    public void onDropItem(DropItemEvent.Pre event) {
+//        Player player = event.getCause().first(Player.class).orElse(null);
+//        if (player == null) return;
+//        boolean result = false;
+//        for (ItemStackSnapshot s : event.getOriginalDroppedItems()) {
+//            result |= AntiGlitch.checkItemStack(player, s);
+//        }
+//        if (result) {
+//            // "allow" the item to be dropped, but drop into nothing
+//            event.getDroppedItems().clear();
+//            AntiGlitch.log(player, event.getOriginalDroppedItems());
+//        }
+//    }
 
     private void cleanInv(Player player) {
         Task.builder()

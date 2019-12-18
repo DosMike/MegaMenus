@@ -2,9 +2,11 @@ package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IClickable;
+import de.dosmike.sponge.megamenus.api.elements.concepts.IPressable;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IValueChangeable;
 import de.dosmike.sponge.megamenus.api.listener.OnChangeListener;
 import de.dosmike.sponge.megamenus.api.listener.OnClickListener;
+import de.dosmike.sponge.megamenus.api.listener.OnKeyListener;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
@@ -28,10 +30,11 @@ import java.util.List;
  * This element displays a cyclic value. Compared to the checkbox this can have more values
  * and custom icons (icons won't display in text UIs)
  */
-final public class MSpinner extends IElementImpl implements IClickable<MSpinner>, IValueChangeable<Text, MSpinner> {
+final public class MSpinner extends IElementImpl implements IClickable<MSpinner>, IPressable<MSpinner>, IValueChangeable<Text, MSpinner> {
 
     private int index=0;
     private OnClickListener<MSpinner> clickListener = null;
+    private OnKeyListener<MSpinner> keyListener = null;
     private OnChangeListener<Text, MSpinner> changeListener = null;
     private Text defaultName = Text.of(getClass().getSimpleName());
     private List<IIcon> defaultIcons = new LinkedList<>();
@@ -76,6 +79,12 @@ final public class MSpinner extends IElementImpl implements IClickable<MSpinner>
         if (changeListener != null)
             changeListener.onValueChange(oldValue, MSpinner.this.getValue(), MSpinner.this, v);
     };
+
+    @Override
+    public void fireKeyEvent(Player viewer, Buttons key, boolean ctrl) {
+        if (keyListener != null)
+            keyListener.onKeyPress(this, viewer, key, ctrl);
+    }
 
     /**
      * The currently selected index in this spinner as offset to the first value
@@ -126,7 +135,7 @@ final public class MSpinner extends IElementImpl implements IClickable<MSpinner>
     }
 
     @Override
-    public OnClickListener<MSpinner> getOnClickListerner() {
+    public OnClickListener<MSpinner> getOnClickListener() {
         return internalClickListener;
     }
 
@@ -136,8 +145,23 @@ final public class MSpinner extends IElementImpl implements IClickable<MSpinner>
     }
 
     @Override
+    public OnKeyListener<MSpinner> getOnKeyListener() {
+        return keyListener;
+    }
+
+    @Override
     public void setOnClickListener(OnClickListener<MSpinner> listener) {
         clickListener = listener;
+    }
+
+    @Override
+    public void setOnChangeListener(OnChangeListener<Text, MSpinner> listener) {
+        changeListener = listener;
+    }
+
+    @Override
+    public void setOnKeyListener(OnKeyListener<MSpinner> listener) {
+        keyListener = listener;
     }
 
     @Override
@@ -185,11 +209,6 @@ final public class MSpinner extends IElementImpl implements IClickable<MSpinner>
      */
     public void setLore(List<Text> lore) {
         defaultValues = new LinkedList<>(lore);
-    }
-
-    @Override
-    public void setOnChangeListener(OnChangeListener<Text, MSpinner> listener) {
-        changeListener = listener;
     }
 
     public MSpinner() {}
