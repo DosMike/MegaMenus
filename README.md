@@ -52,6 +52,7 @@ dependencies {
     compile 'com.github.DosMike:MegaMenus:master-SNAPSHOT'
 }
 ```
+You can view the JavaDocs [here](https://dosmike.github.io/MegaMenus/index.html)
 
 ## External Connections
 
