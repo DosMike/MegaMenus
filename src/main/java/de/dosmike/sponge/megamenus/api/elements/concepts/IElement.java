@@ -86,6 +86,7 @@ public interface IElement extends Identifiable {
      * Note that elements can overlap and ALL overlapping elements will receive
      * interaction events at once!
      * @param position The new X and Y coordinated to render this element at.
+     * @throws IllegalStateException if the position provided is null, but the element was already added to the menu.
      */
     void setPosition(SlotPos position);
 

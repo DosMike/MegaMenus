@@ -133,8 +133,8 @@ final public class MLabel extends IElementImpl {
     @Override
     public MLabel copy() {
         MLabel copy = new MLabel();
+        copy.setPosition(getPosition());
         copy.setParent(getParent());
-        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.defaultName = defaultName;
         copy.defaultIcon = defaultIcon;
         copy.defaultLore = new LinkedList<>(defaultLore);

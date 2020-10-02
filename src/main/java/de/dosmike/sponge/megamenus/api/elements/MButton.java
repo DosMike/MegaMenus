@@ -204,8 +204,8 @@ final public class MButton extends IElementImpl implements IClickable<MButton>, 
     @Override
     public MButton copy() {
         MButton copy = new MButton();
+        copy.setPosition(getPosition());
         copy.setParent(getParent());
-        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.defaultName = defaultName;
         copy.defaultIcon = defaultIcon;
         copy.defaultLore = new LinkedList<>(defaultLore);

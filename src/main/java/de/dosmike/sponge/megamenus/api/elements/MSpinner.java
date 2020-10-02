@@ -316,8 +316,8 @@ final public class MSpinner extends IElementImpl implements IClickable<MSpinner>
     public MSpinner copy() {
         MSpinner copy = new MSpinner();
         copy.defaultIcons.addAll(defaultIcons);
+        copy.setPosition(getPosition());
         copy.setParent(getParent());
-        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.defaultName = defaultName;
         copy.defaultValues = new LinkedList<>(defaultValues);
         copy.clickListener = clickListener;

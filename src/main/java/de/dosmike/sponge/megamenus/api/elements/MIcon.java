@@ -121,8 +121,8 @@ final public class MIcon extends IElementImpl {
     @Override
     public MIcon copy() {
         MIcon copy = new MIcon();
+        copy.setPosition(getPosition());
         copy.setParent(getParent());
-        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.defaultName = defaultName;
         copy.defaultIcon = defaultIcon;
         copy.defaultLore = new LinkedList<>(defaultLore);

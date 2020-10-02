@@ -13,6 +13,7 @@ import de.dosmike.sponge.megamenus.impl.AnimationManager;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.util.MenuUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
@@ -48,9 +49,11 @@ public abstract class IElementImpl implements IElement {
     }
 
     @Override
-
-    public void setPosition(@NotNull SlotPos position) {
-        this.pos = new SlotPos(position.getX(), position.getY());
+    public void setPosition(@Nullable SlotPos position) {
+        if (parent != null && position == null)
+            throw new IllegalStateException("You can not use PositionProviders with this element anymore, it's already added to a menu.");
+        //copy position, in case the caller wants to manipulate the input in a loop or something
+        this.pos = position != null ? new SlotPos(position.getX(), position.getY()) : null;
     }
 
     /**

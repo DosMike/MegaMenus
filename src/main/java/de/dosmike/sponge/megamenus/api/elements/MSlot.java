@@ -157,8 +157,8 @@ final public class MSlot extends IElementImpl implements IInventory<MSlot> {
     public MSlot copy() {
         MSlot copy = new MSlot();
         copy.setItemStack(getItemStack().orElse(ItemStack.empty()));
+        copy.setPosition(getPosition());
         copy.setParent(getParent());
-        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.slotAccess = slotAccess;
         copy.listener = listener;
         copy.guiPutFilter = guiPutFilter;
