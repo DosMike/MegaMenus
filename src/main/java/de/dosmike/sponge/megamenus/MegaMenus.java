@@ -27,7 +27,7 @@ import org.spongepowered.api.scheduler.Task;
 import java.io.IOException;
 import java.nio.file.Path;
 
-@Plugin(id="megamenus", name="Mega Menus", version="0.7", authors={"DosMike"})
+@Plugin(id="megamenus", name="Mega Menus", version="0.8", authors={"DosMike"})
 final public class MegaMenus {
     public static void main(String[] args) { System.err.println("This plugin can not be run as executable!"); }
 

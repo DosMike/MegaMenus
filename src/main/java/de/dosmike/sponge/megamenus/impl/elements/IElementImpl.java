@@ -5,6 +5,7 @@ import de.dosmike.sponge.megamenus.MegaMenus;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.IIcon;
+import de.dosmike.sponge.megamenus.api.elements.PositionProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.util.Tickable;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
@@ -12,6 +13,7 @@ import de.dosmike.sponge.megamenus.impl.AnimationManager;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.util.MenuUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
@@ -27,7 +29,12 @@ import java.util.*;
  */
 public abstract class IElementImpl implements IElement {
 
-    private SlotPos pos = new SlotPos(0,0);
+    /**
+     * Setting the position to null after the menu is rendered
+     * does <b>not</b> re-query a position from the menus {@link PositionProvider}.
+     * The PositionProvider will only be invoked once, as the item it is #putOnPage.
+     */
+    protected SlotPos pos = null; // query position provider by default
     private IMenu parent;
     protected UUID uiid = UUID.randomUUID();
 
@@ -42,8 +49,11 @@ public abstract class IElementImpl implements IElement {
     }
 
     @Override
-    public void setPosition(@NotNull SlotPos position) {
-        this.pos = new SlotPos(position.getX(), position.getY());
+    public void setPosition(@Nullable SlotPos position) {
+        if (parent != null && position == null)
+            throw new IllegalStateException("You can not use PositionProviders with this element anymore, it's already added to a menu.");
+        //copy position, in case the caller wants to manipulate the input in a loop or something
+        this.pos = position != null ? new SlotPos(position.getX(), position.getY()) : null;
     }
 
     /**

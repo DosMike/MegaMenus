@@ -7,6 +7,7 @@ import de.dosmike.sponge.megamenus.api.listener.OnKeyListener;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
@@ -109,8 +110,14 @@ final public class MButton extends IElementImpl implements IClickable<MButton>, 
         private Builder() {
         }
 
-        public Builder setPosition(SlotPos position) {
-            element.setPosition(position);
+        /**
+         * Not providing a position or setting the position to null
+         * will query a position from the menus {@link PositionProvider}
+         * at the moment the element is added to the menu.
+         * @param position where this element is supposed to go or null for auto
+         */
+        public Builder setPosition(@Nullable SlotPos position) {
+            element.pos = position;
             return this;
         }
 
