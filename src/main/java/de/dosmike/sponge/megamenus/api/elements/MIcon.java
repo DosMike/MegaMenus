@@ -1,6 +1,7 @@
 package de.dosmike.sponge.megamenus.api.elements;
 
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -67,8 +68,14 @@ final public class MIcon extends IElementImpl {
         private Builder() {
         }
 
-        public Builder setPosition(SlotPos position) {
-            element.setPosition(position);
+        /**
+         * Not providing a position or setting the position to null
+         * will query a position from the menus {@link PositionProvider}
+         * at the moment the element is added to the menu.
+         * @param position where this element is supposed to go or null for auto
+         */
+        public Builder setPosition(@Nullable SlotPos position) {
+            element.pos = position;
             return this;
         }
 
@@ -114,8 +121,8 @@ final public class MIcon extends IElementImpl {
     @Override
     public MIcon copy() {
         MIcon copy = new MIcon();
-        copy.setPosition(getPosition());
         copy.setParent(getParent());
+        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.defaultName = defaultName;
         copy.defaultIcon = defaultIcon;
         copy.defaultLore = new LinkedList<>(defaultLore);

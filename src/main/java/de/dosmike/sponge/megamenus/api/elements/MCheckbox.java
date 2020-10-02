@@ -9,6 +9,7 @@ import de.dosmike.sponge.megamenus.api.listener.OnKeyListener;
 import de.dosmike.sponge.megamenus.impl.RenderManager;
 import de.dosmike.sponge.megamenus.impl.TextMenuRenderer;
 import de.dosmike.sponge.megamenus.impl.elements.IElementImpl;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.player.Player;
@@ -165,8 +166,14 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
         private Builder() {
         }
 
-        public Builder setPosition(SlotPos position) {
-            element.setPosition(position);
+        /**
+         * Not providing a position or setting the position to null
+         * will query a position from the menus {@link PositionProvider}
+         * at the moment the element is added to the menu.
+         * @param position where this element is supposed to go or null for auto
+         */
+        public Builder setPosition(@Nullable SlotPos position) {
+            element.pos = position;
             return this;
         }
 
@@ -239,8 +246,8 @@ final public class MCheckbox extends IElementImpl implements IClickable<MCheckbo
     @Override
     public MCheckbox copy() {
         MCheckbox copy = new MCheckbox();
-        copy.setPosition(getPosition());
         copy.setParent(getParent());
+        copy.pos = pos!=null?new SlotPos(pos.getX(), pos.getY()):null;
         copy.value = value;
         copy.defaultName = defaultName;
         copy.defaultLore = new LinkedList<>(defaultLore);

@@ -147,21 +147,23 @@ public class GuiRenderer extends AbstractMenuRenderer {
                 interactionCancel(testChange, event);
 
                 if (e instanceof IPressable)
-                    ((IPressable) e).fireKeyEvent(viewer, IPressable.Buttons.fromNumberPress(((ClickInventoryEvent.NumberPress) event).getNumber()), false);
+                    ((IPressable<?>) e).fireKeyEvent(viewer, IPressable.Buttons.fromNumberPress(((ClickInventoryEvent.NumberPress) event).getNumber()), false);
             } else if (event instanceof ClickInventoryEvent.Drop) {
                 interactionCancel(testChange, event);
 
                 // Drop.Outside is a mouse action, so discard that here
                 if (e instanceof IPressable && !(event instanceof ClickInventoryEvent.Drop.Outside))
-                    ((IPressable) e).fireKeyEvent(viewer, IPressable.Buttons.DROP, (event instanceof ClickInventoryEvent.Drop.Full));
-            } else {
-                //default actions
+                    ((IPressable<?>) e).fireKeyEvent(viewer, IPressable.Buttons.DROP, (event instanceof ClickInventoryEvent.Drop.Full));
+            } else if (e instanceof IInventory) {
+                // somewhat special case for IInventory slots
+                IInventory<?> ie = (IInventory<?>)e;
                 boolean cancelInventory = false;
-                if ((e.getAccess() & IElement.GUI_ACCESS_TAKE) == 0 && testChange.getItemsTaken().map(i -> !i.isEmpty()).orElse(false)) {
+                if (testChange.getItemsTaken().map(i -> !i.isEmpty()).orElse(false) &&
+                    !ie.testAccessTake(testChange.getItemsTaken().get())) { //can't take this
                     interactionCancel(testChange, event);
                     cancelInventory = true;
-                }
-                if ((e.getAccess() & IElement.GUI_ACCESS_PUT) == 0 && testChange.getItemsGiven().map(i -> !i.isEmpty()).orElse(false)) {
+                } else if (testChange.getItemsGiven().map(i -> !i.isEmpty()).orElse(false) &&
+                    !ie.testAccessPut(testChange.getItemsGiven().get())) { //can't put this here
                     interactionCancel(testChange, event);
                     cancelInventory = true;
                 }
@@ -171,13 +173,31 @@ public class GuiRenderer extends AbstractMenuRenderer {
                     if (event instanceof ClickInventoryEvent.Primary) button = MouseEvent.BUTTON1;
                     else if (event instanceof ClickInventoryEvent.Secondary) button = MouseEvent.BUTTON2;
                     else if (event instanceof ClickInventoryEvent.Middle) button = MouseEvent.BUTTON3;
-                    ((IClickable) e).fireClickEvent(viewer, button, (event instanceof ClickInventoryEvent.Shift));
+                    ((IClickable<?>) e).fireClickEvent(viewer, button, (event instanceof ClickInventoryEvent.Shift));
                 }
-                if (!cancelInventory && e instanceof IInventory) {
-                    if (e instanceof MSlot) {
-                        ((MSlot) e).setItemStack(slot.getTransaction().getFinal());
-                    }
-                    ((IInventory) e).fireSlotChangeEvent(viewer, slot);
+                if (!cancelInventory) {
+                    ie.setItemStack(slot.getTransaction().getFinal());
+                    ie.fireSlotChangeEvent(viewer, slot);
+                }
+            } else {
+                //default actions
+                //the element does not have to be a IInventory to allow inserting and removing items
+                // a fuel kind of slot for example does not need to keep the given items
+                boolean cancelInventory = false;
+                if ((e.getAccess() & IElement.GUI_ACCESS_TAKE) == 0 && testChange.getItemsTaken().map(i -> !i.isEmpty()).orElse(false)) {
+                    interactionCancel(testChange, event);
+                    cancelInventory = true;
+                } else if ((e.getAccess() & IElement.GUI_ACCESS_PUT) == 0 && testChange.getItemsGiven().map(i -> !i.isEmpty()).orElse(false)) {
+                    interactionCancel(testChange, event);
+                    cancelInventory = true;
+                }
+
+                if (e instanceof IClickable) {
+                    int button = MouseEvent.NOBUTTON;
+                    if (event instanceof ClickInventoryEvent.Primary) button = MouseEvent.BUTTON1;
+                    else if (event instanceof ClickInventoryEvent.Secondary) button = MouseEvent.BUTTON2;
+                    else if (event instanceof ClickInventoryEvent.Middle) button = MouseEvent.BUTTON3;
+                    ((IClickable<?>) e).fireClickEvent(viewer, button, (event instanceof ClickInventoryEvent.Shift));
                 }
             }
         }

@@ -3,6 +3,7 @@ package de.dosmike.sponge.megamenus.api.elements.concepts;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.IIcon;
+import de.dosmike.sponge.megamenus.api.elements.PositionProvider;
 import de.dosmike.sponge.megamenus.api.util.Tickable;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
 import de.dosmike.sponge.megamenus.impl.AnimationManager;
@@ -76,6 +77,10 @@ public interface IElement extends Identifiable {
     SlotPos getPosition();
 
     /**
+     * Can move the item on the page it is put on.<br>
+     * If you want to query the {@link PositionProvider} to set this elements position,
+     * use either the Builder. Auto positions become unavailable once the element is
+     * placed.<br>
      * The inventory will always be 9 wide, but the height depends on how the menu was
      * initialized.<br>
      * Note that elements can overlap and ALL overlapping elements will receive

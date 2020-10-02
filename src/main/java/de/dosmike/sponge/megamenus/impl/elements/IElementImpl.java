@@ -5,6 +5,7 @@ import de.dosmike.sponge.megamenus.MegaMenus;
 import de.dosmike.sponge.megamenus.api.IMenu;
 import de.dosmike.sponge.megamenus.api.MenuRenderer;
 import de.dosmike.sponge.megamenus.api.elements.IIcon;
+import de.dosmike.sponge.megamenus.api.elements.PositionProvider;
 import de.dosmike.sponge.megamenus.api.elements.concepts.IElement;
 import de.dosmike.sponge.megamenus.api.util.Tickable;
 import de.dosmike.sponge.megamenus.exception.ObjectBuilderException;
@@ -27,7 +28,12 @@ import java.util.*;
  */
 public abstract class IElementImpl implements IElement {
 
-    private SlotPos pos = new SlotPos(0,0);
+    /**
+     * Setting the position to null after the menu is rendered
+     * does <b>not</b> re-query a position from the menus {@link PositionProvider}.
+     * The PositionProvider will only be invoked once, as the item it is #putOnPage.
+     */
+    protected SlotPos pos = null; // query position provider by default
     private IMenu parent;
     protected UUID uiid = UUID.randomUUID();
 
@@ -42,6 +48,7 @@ public abstract class IElementImpl implements IElement {
     }
 
     @Override
+
     public void setPosition(@NotNull SlotPos position) {
         this.pos = new SlotPos(position.getX(), position.getY());
     }
